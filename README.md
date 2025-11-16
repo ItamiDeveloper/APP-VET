@@ -49,14 +49,16 @@ Este módulo corresponde a la interfaz web del sistema APP-VET, desarrollado con
 ## 📁 Instalación del proyecto
 
 1. Clona el repositorio (si no lo has hecho):
-   ```bash
+
    git clone https://github.com/tu-usuario/APP-VET.git
    cd APP-VET/nx-vet
    
 Instala las dependencias:
+   
    npm install
    
 🚀 Levantar servidor de desarrollo
+
    npm run dev
 
 
