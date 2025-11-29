@@ -1,9 +1,7 @@
-package com.vet.spring.app.entity.veterinaria;
+package com.vet.spring.app.entity.usuario;
 
-import java.time.LocalDate;
-
-import com.vet.spring.app.entity.plan.Plan;
-
+import com.vet.spring.app.entity.veterinaria.Estado;
+import com.vet.spring.app.entity.veterinaria.Veterinaria;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,24 +13,25 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "SUSCRIPCION")
+@Table(name = "USUARIO")
 @Getter @Setter
-public class Suscripcion {
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idSuscripcion;
+    private Integer idUsuario;
 
     @ManyToOne
     @JoinColumn(name = "id_veterinaria", nullable = false)
     private Veterinaria veterinaria;
 
     @ManyToOne
-    @JoinColumn(name = "id_plan", nullable = false)
-    private Plan plan;
+    @JoinColumn(name = "id_rol", nullable = false)
+    private Rol rol;
 
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
+    private String username;
+    private String passwordHash;
+    private String email;
 
-    private Estado estado;
+    private com.vet.spring.app.entity.veterinaria.Estado estado;
 }

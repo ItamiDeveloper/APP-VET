@@ -1,6 +1,4 @@
-package com.vet.spring.app.entity.veterinaria;
-
-import com.vet.spring.app.entity.plan.Plan;
+package com.vet.spring.app.entity.mascota;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,22 +11,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "VETERINARIA")
+@Table(name = "RAZA")
 @Getter @Setter
-public class Veterinaria {
+public class Raza {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idVeterinaria;
+    private Integer idRaza;
 
     @ManyToOne
-    @JoinColumn(name = "id_plan", nullable = false)
-    private Plan plan;
+    @JoinColumn(name = "id_especie", nullable = false)
+    private Especie especie;
 
     private String nombre;
-    private String ruc;
-    private String telefono;
-    private String direccion;
-
-    private Estado estado;
+    private String descripcion;
 }

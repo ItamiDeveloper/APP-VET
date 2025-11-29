@@ -1,9 +1,6 @@
-package com.vet.spring.app.entity.veterinaria;
+package com.vet.spring.app.entity.inventario;
 
-import java.time.LocalDate;
-
-import com.vet.spring.app.entity.plan.Plan;
-
+import com.vet.spring.app.entity.veterinaria.Veterinaria;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,24 +12,23 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "SUSCRIPCION")
+@Table(name = "INVENTARIO")
 @Getter @Setter
-public class Suscripcion {
+public class Inventario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idSuscripcion;
+    private Integer idInventario;
 
     @ManyToOne
     @JoinColumn(name = "id_veterinaria", nullable = false)
     private Veterinaria veterinaria;
 
     @ManyToOne
-    @JoinColumn(name = "id_plan", nullable = false)
-    private Plan plan;
+    @JoinColumn(name = "id_producto", nullable = false)
+    private Producto producto;
 
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
-
-    private Estado estado;
+    private Integer stockActual;
+    private Integer stockMinimo;
+    private Integer stockMaximo;
 }

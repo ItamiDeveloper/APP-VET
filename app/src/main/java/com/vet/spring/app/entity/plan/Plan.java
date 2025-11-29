@@ -1,6 +1,9 @@
-package com.vet.spring.app.entity.veterinaria;
+package com.vet.spring.app.entity.plan;
 
 import java.math.BigDecimal;
+
+import com.vet.spring.app.entity.veterinaria.Estado;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;

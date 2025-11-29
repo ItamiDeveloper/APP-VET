@@ -1,9 +1,10 @@
-package com.vet.spring.app.entity.veterinaria;
+package com.vet.spring.app.entity.compra;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-import com.vet.spring.app.entity.plan.Plan;
-
+import com.vet.spring.app.entity.inventario.Proveedor;
+import com.vet.spring.app.entity.veterinaria.Veterinaria;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,24 +16,23 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "SUSCRIPCION")
+@Table(name = "COMPRA")
 @Getter @Setter
-public class Suscripcion {
+public class Compra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idSuscripcion;
+    private Integer idCompra;
 
     @ManyToOne
     @JoinColumn(name = "id_veterinaria", nullable = false)
     private Veterinaria veterinaria;
 
     @ManyToOne
-    @JoinColumn(name = "id_plan", nullable = false)
-    private Plan plan;
+    @JoinColumn(name = "id_proveedor", nullable = false)
+    private Proveedor proveedor;
 
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
-
-    private Estado estado;
+    private LocalDateTime fecha;
+    private BigDecimal total;
+    private String estado; // PENDIENTE,PAGADA,ANULADA
 }

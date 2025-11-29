@@ -1,7 +1,7 @@
-package com.vet.spring.app.entity.veterinaria;
+package com.vet.spring.app.entity.inventario;
 
-import com.vet.spring.app.entity.plan.Plan;
-
+import java.math.BigDecimal;
+import com.vet.spring.app.entity.veterinaria.Estado;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,22 +13,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "VETERINARIA")
+@Table(name = "PRODUCTO")
 @Getter @Setter
-public class Veterinaria {
+public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idVeterinaria;
+    private Integer idProducto;
 
     @ManyToOne
-    @JoinColumn(name = "id_plan", nullable = false)
-    private Plan plan;
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private CategoriaProducto categoria;
 
     private String nombre;
-    private String ruc;
-    private String telefono;
-    private String direccion;
-
+    private String descripcion;
+    private Boolean esMedicamento;
+    private BigDecimal precioUnitario;
     private Estado estado;
 }
