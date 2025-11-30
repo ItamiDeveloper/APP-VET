@@ -1,7 +1,7 @@
-package com.vet.spring.app.service.planService.PlanService;
+package com.vet.spring.app.service.planService;
 
 import java.util.List;
-import com.vet.spring.app.dto.plan.PlanDTO;
+import com.vet.spring.app.dto.planDto.PlanDTO;
 
 public interface PlanService {
     List<PlanDTO> findAll();
