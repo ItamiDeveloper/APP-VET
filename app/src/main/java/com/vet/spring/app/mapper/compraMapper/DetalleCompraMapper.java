@@ -1,8 +1,8 @@
 package com.vet.spring.app.mapper.compraMapper;
 
 import com.vet.spring.app.dto.compraDto.DetalleCompraDTO;
-import com.vet.spring.app.entity.inventario.DetalleCompra;
 import com.vet.spring.app.entity.compra.Compra;
+import com.vet.spring.app.entity.compra.DetalleCompra;
 import com.vet.spring.app.entity.inventario.Producto;
 
 public class DetalleCompraMapper {

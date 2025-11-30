@@ -1,8 +1,8 @@
-package com.vet.spring.app.entity.inventario;
+package com.vet.spring.app.entity.compra;
 
 import java.math.BigDecimal;
 
-import com.vet.spring.app.entity.compra.Compra;
+import com.vet.spring.app.entity.inventario.Producto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
