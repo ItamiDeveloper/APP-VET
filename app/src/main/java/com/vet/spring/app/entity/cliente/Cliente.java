@@ -11,6 +11,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 
 @Entity
 @Table(name = "CLIENTE")
@@ -33,5 +35,6 @@ public class Cliente {
     private String email;
     private String direccion;
 
+    @Enumerated(EnumType.STRING)
     private Estado estado;
 }

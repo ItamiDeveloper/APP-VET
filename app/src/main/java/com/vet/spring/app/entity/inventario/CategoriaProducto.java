@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,5 +22,7 @@ public class CategoriaProducto {
 
     private String nombre;
     private String descripcion;
+
+    @Enumerated(EnumType.STRING)
     private Estado estado;
 }
