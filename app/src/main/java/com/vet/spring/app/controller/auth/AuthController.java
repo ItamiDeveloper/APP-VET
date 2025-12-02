@@ -22,7 +22,6 @@ import com.vet.spring.app.repository.usuarioRepository.UsuarioRepository;
 import com.vet.spring.app.security.JwtUtil;
 import com.vet.spring.app.security.UserDetailsImpl;
 import com.vet.spring.app.service.usuarioService.RefreshTokenService;
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
