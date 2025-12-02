@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,12 +38,12 @@ public class VeterinariaController {
     }
 
     @PostMapping
-    public ResponseEntity<VeterinariaDTO> create(@RequestBody VeterinariaDTO dto) {
+    public ResponseEntity<VeterinariaDTO> create(@Valid @RequestBody VeterinariaDTO dto) {
         return ResponseEntity.ok(veterinariaService.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VeterinariaDTO> update(@PathVariable Integer id, @RequestBody VeterinariaDTO dto) {
+    public ResponseEntity<VeterinariaDTO> update(@PathVariable Integer id, @Valid @RequestBody VeterinariaDTO dto) {
         VeterinariaDTO updated = veterinariaService.update(id, dto);
         return updated == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
     }
