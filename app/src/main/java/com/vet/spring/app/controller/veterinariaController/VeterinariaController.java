@@ -1,4 +1,4 @@
-package com.vet.spring.app.controller;
+package com.vet.spring.app.controller.veterinariaController;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vet.spring.app.dto.veterinaria.VeterinariaDTO;
-import com.vet.spring.app.service.veterinaria.VeterinariaService;
+import com.vet.spring.app.dto.veterinariaDto.VeterinariaDTO;
+import com.vet.spring.app.service.veterinariaService.VeterinariaService;
 
 @RestController
 @RequestMapping("/api/veterinarias")

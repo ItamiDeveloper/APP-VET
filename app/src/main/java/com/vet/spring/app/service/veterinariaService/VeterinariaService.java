@@ -1,7 +1,7 @@
-package com.vet.spring.app.service.veterinaria;
+package com.vet.spring.app.service.veterinariaService;
 
 import java.util.List;
-import com.vet.spring.app.dto.veterinaria.VeterinariaDTO;
+import com.vet.spring.app.dto.veterinariaDto.VeterinariaDTO;
 
 public interface VeterinariaService {
     List<VeterinariaDTO> findAll();

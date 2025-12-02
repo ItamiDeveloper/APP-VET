@@ -1,4 +1,4 @@
-package com.vet.spring.app.controller;
+package com.vet.spring.app.controller.planController;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vet.spring.app.dto.plan.PlanDTO;
-import com.vet.spring.app.service.plan.PlanService;
+import com.vet.spring.app.dto.planDto.PlanDTO;
+import com.vet.spring.app.service.planService.PlanService;
 
 @RestController
 @RequestMapping("/api/plans")

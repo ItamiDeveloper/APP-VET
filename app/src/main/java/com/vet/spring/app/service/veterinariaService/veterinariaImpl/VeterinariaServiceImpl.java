@@ -1,4 +1,4 @@
-package com.vet.spring.app.service.veterinaria.impl;
+package com.vet.spring.app.service.veterinariaService.veterinariaImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vet.spring.app.dto.veterinaria.VeterinariaDTO;
+import com.vet.spring.app.dto.veterinariaDto.VeterinariaDTO;
 import com.vet.spring.app.entity.veterinaria.Veterinaria;
-import com.vet.spring.app.mapper.VeterinariaMapper;
-import com.vet.spring.app.repository.VeterinariaRepository;
-import com.vet.spring.app.service.veterinaria.VeterinariaService;
+import com.vet.spring.app.mapper.veterinariaMapper.VeterinariaMapper;
+import com.vet.spring.app.repository.veterinariaRepository.VeterinariaRepository;
+import com.vet.spring.app.service.veterinariaService.VeterinariaService;
 
 @Service
 @Transactional
