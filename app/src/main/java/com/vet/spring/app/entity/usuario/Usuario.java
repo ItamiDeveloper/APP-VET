@@ -1,13 +1,7 @@
 package com.vet.spring.app.entity.usuario;
 
 import com.vet.spring.app.entity.veterinaria.Veterinaria;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,5 +26,6 @@ public class Usuario {
     private String passwordHash;
     private String email;
 
+    @Enumerated(EnumType.STRING)
     private com.vet.spring.app.entity.veterinaria.Estado estado;
 }

@@ -3,6 +3,7 @@ package com.vet.spring.app.controller.planController;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,17 +39,20 @@ public class PlanController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<PlanDTO> create(@Valid @RequestBody PlanDTO dto) {
         return ResponseEntity.ok(planService.create(dto));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<PlanDTO> update(@PathVariable Integer id, @Valid @RequestBody PlanDTO dto) {
         PlanDTO updated = planService.update(id, dto);
         return updated == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         planService.delete(id);
         return ResponseEntity.noContent().build();

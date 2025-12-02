@@ -3,6 +3,7 @@ package com.vet.spring.app.controller.inventarioController;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,17 +39,20 @@ public class ProductoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VETERINARIO')")
     public ResponseEntity<ProductoDTO> create(@Valid @RequestBody ProductoDTO dto) {
         return ResponseEntity.ok(productoService.create(dto));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VETERINARIO')")
     public ResponseEntity<ProductoDTO> update(@PathVariable Integer id, @Valid @RequestBody ProductoDTO dto) {
         ProductoDTO updated = productoService.update(id, dto);
         return updated == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         productoService.delete(id);
         return ResponseEntity.noContent().build();
