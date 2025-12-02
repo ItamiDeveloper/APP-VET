@@ -60,12 +60,14 @@ INSERT INTO SUSCRIPCION (id_veterinaria, id_plan, fecha_inicio, fecha_fin, estad
 
 -- Insertar usuario administrador de prueba (password: admin123)
 -- Password hash generado con BCrypt para "admin123"
-INSERT INTO USUARIO (id_veterinaria, id_rol, username, password_hash, email, estado) VALUES
-(1, 1, 'admin', '$2a$10$N9qo8uLOickgx2ZMRZoMye/IKKZVq6Z8t7k5rGYuJ5hL8K1KxUZw2', 'admin@vetdemo.com', 'ACTIVO');
 
--- Insertar usuario veterinario de prueba (password: vet123)
+-- Usuario admin (password: admin123)
 INSERT INTO USUARIO (id_veterinaria, id_rol, username, password_hash, email, estado) VALUES
-(1, 2, 'veterinario', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'veterinario@vetdemo.com', 'ACTIVO');
+(1, 1, 'admin', '$2a$10$dXJ3SW6G7P370PKenZP82u3.LwdFP7D.CnK0MkLfJLBB3KPLfITLe', 'admin@vetdemo.com', 'ACTIVO');
+
+-- Usuario veterinario (password: vet123)
+INSERT INTO USUARIO (id_veterinaria, id_rol, username, password_hash, email, estado) VALUES
+(1, 2, 'veterinario', '$2a$10$mLDxNLK5YRU3TqvGVVhKPu1Q.M1dBhRCL1dpMfWLQAE9FQMxdJT/q', 'veterinario@vetdemo.com', 'ACTIVO');
 
 -- Insertar un doctor vinculado al usuario veterinario
 INSERT INTO DOCTOR (id_veterinaria, id_usuario, nombres, apellidos, colegiatura, especialidad, estado) VALUES
