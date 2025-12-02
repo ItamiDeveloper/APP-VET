@@ -10,5 +10,6 @@ public class UsuarioDTO {
     private Integer idRol;
     private String username;
     private String email;
+    private String password;
     private String estado;
 }
