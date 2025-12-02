@@ -12,6 +12,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuario")
     private Integer idUsuario;
 
     @ManyToOne
@@ -23,6 +24,7 @@ public class Usuario {
     private Rol rol;
 
     private String username;
+    @Column(name = "password_hash")
     private String passwordHash;
     private String email;
 
