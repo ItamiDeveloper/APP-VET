@@ -5,6 +5,8 @@ import com.vet.spring.app.entity.veterinaria.Veterinaria;
 import com.vet.spring.app.entity.mascota.Mascota;
 import com.vet.spring.app.entity.doctor.Doctor;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,5 +40,6 @@ public class Cita {
     private LocalDateTime fechaHora;
     private String motivo;
 
+    @Enumerated(EnumType.STRING)
     private CitaEstado estado;
 }
