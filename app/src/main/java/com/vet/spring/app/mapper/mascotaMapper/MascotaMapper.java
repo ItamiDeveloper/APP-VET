@@ -34,6 +34,7 @@ public class MascotaMapper {
         e.setSexo(d.getSexo());
         e.setFechaNacimiento(d.getFechaNacimiento());
         e.setColor(d.getColor());
+        if (d.getEstado() != null) e.setEstado(Enum.valueOf(com.vet.spring.app.entity.veterinaria.Estado.class, d.getEstado()));
         return e;
     }
 }

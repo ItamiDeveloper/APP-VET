@@ -34,6 +34,7 @@ public class ClienteMapper {
         e.setTelefono(d.getTelefono());
         e.setEmail(d.getEmail());
         e.setDireccion(d.getDireccion());
+        if (d.getEstado() != null) e.setEstado(Enum.valueOf(com.vet.spring.app.entity.veterinaria.Estado.class, d.getEstado()));
         return e;
     }
 }
