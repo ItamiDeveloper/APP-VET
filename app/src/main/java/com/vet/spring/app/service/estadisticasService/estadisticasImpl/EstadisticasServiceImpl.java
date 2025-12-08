@@ -26,6 +26,8 @@ import com.vet.spring.app.repository.citaRepository.CitaRepository;
 import com.vet.spring.app.repository.clienteRepository.ClienteRepository;
 import com.vet.spring.app.repository.mascotaRepository.MascotaRepository;
 import com.vet.spring.app.repository.ventaRepository.VentaRepository;
+import com.vet.spring.app.repository.veterinariaRepository.VeterinariaRepository;
+import com.vet.spring.app.repository.planRepository.PlanRepository;
 import com.vet.spring.app.service.estadisticasService.EstadisticasService;
 
 @Service
@@ -36,16 +38,22 @@ public class EstadisticasServiceImpl implements EstadisticasService {
     private final MascotaRepository mascotaRepository;
     private final CitaRepository citaRepository;
     private final VentaRepository ventaRepository;
+    private final VeterinariaRepository veterinariaRepository;
+    private final PlanRepository planRepository;
 
     public EstadisticasServiceImpl(
             ClienteRepository clienteRepository,
             MascotaRepository mascotaRepository,
             CitaRepository citaRepository,
-            VentaRepository ventaRepository) {
+            VentaRepository ventaRepository,
+            VeterinariaRepository veterinariaRepository,
+            PlanRepository planRepository) {
         this.clienteRepository = clienteRepository;
         this.mascotaRepository = mascotaRepository;
         this.citaRepository = citaRepository;
         this.ventaRepository = ventaRepository;
+        this.veterinariaRepository = veterinariaRepository;
+        this.planRepository = planRepository;
     }
 
     @Override
@@ -53,6 +61,8 @@ public class EstadisticasServiceImpl implements EstadisticasService {
         Long totalClientes = clienteRepository.count();
         Long totalMascotas = mascotaRepository.count();
         Long totalCitas = citaRepository.count();
+        Long totalVeterinarias = veterinariaRepository.count();
+        Long totalPlanes = planRepository.count();
         
         // Calcular ingresos totales de ventas pagadas
         List<Venta> ventas = ventaRepository.findAll();
@@ -61,7 +71,7 @@ public class EstadisticasServiceImpl implements EstadisticasService {
             .map(Venta::getTotal)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         
-        return new EstadisticasGeneralesDTO(totalClientes, totalMascotas, totalCitas, totalIngresos);
+        return new EstadisticasGeneralesDTO(totalClientes, totalMascotas, totalCitas, totalIngresos, totalVeterinarias, totalPlanes);
     }
 
     @Override

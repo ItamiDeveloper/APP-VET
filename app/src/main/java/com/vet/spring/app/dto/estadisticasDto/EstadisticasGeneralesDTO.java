@@ -14,4 +14,6 @@ public class EstadisticasGeneralesDTO {
     private Long totalMascotas;
     private Long totalCitas;
     private BigDecimal totalIngresos;
+    private Long totalVeterinarias;
+    private Long totalPlanes;
 }
