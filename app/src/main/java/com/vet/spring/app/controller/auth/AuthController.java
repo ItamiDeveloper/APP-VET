@@ -74,15 +74,6 @@ public class AuthController {
         // Cargar super admin desde la tabla super_admin
         UserDetails userDetails = superAdminUserDetailsService.loadUserByUsername(request.getUsername());
         
-        // DEBUG: Log para verificar qué está pasando
-        System.out.println("=== DEBUG SUPER ADMIN LOGIN ===");
-        System.out.println("Username from request: " + request.getUsername());
-        System.out.println("Password from request: " + request.getPassword());
-        System.out.println("Hash from DB: " + userDetails.getPassword());
-        System.out.println("Hash length: " + (userDetails.getPassword() != null ? userDetails.getPassword().length() : "null"));
-        System.out.println("Password matches: " + passwordEncoder.matches(request.getPassword(), userDetails.getPassword()));
-        System.out.println("===============================");
-        
         // Verificar password
         if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
             throw new BadCredentialsException("Credenciales inválidas");

@@ -10,6 +10,9 @@ public class UsuarioDTO {
     private Integer idRol;
     private String username;
     private String email;
-    private String password;
+    private String password; // Solo para crear/actualizar
+    private String nombres;
+    private String apellidos;
+    private String telefono;
     private String estado;
 }

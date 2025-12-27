@@ -1,5 +1,6 @@
 package com.vet.spring.app.dto.mascotaDto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,5 +15,8 @@ public class MascotaDTO {
     private String sexo;
     private LocalDate fechaNacimiento;
     private String color;
+    private BigDecimal pesoKg;
+    private String microchip;
+    private String observaciones;
     private String estado;
 }
