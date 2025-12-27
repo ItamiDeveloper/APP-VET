@@ -1,7 +1,6 @@
 package com.vet.spring.app.service.estadisticasService.estadisticasImpl;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +18,6 @@ import com.vet.spring.app.dto.estadisticasDto.EstadisticasGeneralesDTO;
 import com.vet.spring.app.dto.estadisticasDto.IngresoMensualDTO;
 import com.vet.spring.app.dto.estadisticasDto.MascotaDistribucionDTO;
 import com.vet.spring.app.entity.cita.Cita;
-import com.vet.spring.app.entity.cliente.Cliente;
 import com.vet.spring.app.entity.mascota.Mascota;
 import com.vet.spring.app.entity.venta.Venta;
 import com.vet.spring.app.repository.citaRepository.CitaRepository;
@@ -83,7 +81,7 @@ public class EstadisticasServiceImpl implements EstadisticasService {
         
         for (Venta venta : ventas) {
             if ("PAGADA".equals(venta.getEstado()) && venta.getFecha() != null) {
-                String mes = venta.getFecha().getMonth().getDisplayName(TextStyle.FULL, new Locale("es", "ES"));
+                String mes = venta.getFecha().getMonth().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("es-ES"));
                 ingresosPorMes.merge(mes, venta.getTotal(), BigDecimal::add);
             }
         }

@@ -8,9 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.vet.spring.app.dto.citaDto.CitaDTO;
 import com.vet.spring.app.entity.cita.Cita;
-import com.vet.spring.app.entity.cliente.Cliente;
 import com.vet.spring.app.mapper.citaMapper.CitaMapper;
-import com.vet.spring.app.mapper.clienteMapper.ClienteMapper;
 import com.vet.spring.app.repository.citaRepository.CitaRepository;
 import com.vet.spring.app.service.citaService.CitaService;
 
@@ -33,6 +31,7 @@ public class CitaServiceImpl implements CitaService {
 
     @Override
     public CitaDTO findById(Integer id) {
+        if (id == null) return null;
         return citaRepository.findById(id).map(CitaMapper::toDTO).orElse(null);
     }
 
@@ -41,12 +40,14 @@ public class CitaServiceImpl implements CitaService {
     public CitaDTO create(CitaDTO dto) {
         Cita entity = CitaMapper.toEntity(dto);
         Cita saved = citaRepository.save(entity);
+        if (saved == null) return null;
         return CitaMapper.toDTO(saved);
     }
 
     @Override
     @Transactional
     public CitaDTO update(Integer id, CitaDTO dto) {
+        if (id == null) return null;
         return citaRepository.findById(id).map(existing -> {
             Cita updated = CitaMapper.toEntity(dto);
             updated.setIdCita(existing.getIdCita());
@@ -58,6 +59,7 @@ public class CitaServiceImpl implements CitaService {
     @Override
     @Transactional
     public void delete(Integer id) {
+        if (id == null) return;
         citaRepository.deleteById(id);
     }
 }

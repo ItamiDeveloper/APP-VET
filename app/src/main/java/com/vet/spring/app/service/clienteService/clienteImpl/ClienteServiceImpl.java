@@ -31,6 +31,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public ClienteDTO findById(Integer id) {
+        if (id == null) return null;
         return clienteRepository.findById(id)
                 .map(ClienteMapper::toDTO)
                 .orElse(null);
@@ -47,6 +48,7 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public ClienteDTO update(Integer id, ClienteDTO dto) {
+        if (id == null) return null;
         return clienteRepository.findById(id).map(existing -> {
             Cliente updated = ClienteMapper.toEntity(dto);
             updated.setIdCliente(existing.getIdCliente());
@@ -58,6 +60,7 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public void delete(Integer id) {
+        if (id == null) return;
         clienteRepository.deleteById(id);
     }
 }

@@ -31,6 +31,7 @@ public class MascotaServiceImpl implements MascotaService {
 
     @Override
     public MascotaDTO findById(Integer id) {
+        if (id == null) return null;
         return mascotaRepository.findById(id).map(MascotaMapper::toDTO).orElse(null);
     }
 
@@ -39,15 +40,18 @@ public class MascotaServiceImpl implements MascotaService {
     public MascotaDTO create(MascotaDTO dto) {
         Mascota entity = MascotaMapper.toEntity(dto);
         Mascota saved = mascotaRepository.save(entity);
+        if (saved == null) return null;
         return MascotaMapper.toDTO(saved);
     }
 
     @Override
     @Transactional
     public MascotaDTO update(Integer id, MascotaDTO dto) {
+        if (id == null) return null;
         return mascotaRepository.findById(id).map(existing -> {
             Mascota updated = MascotaMapper.toEntity(dto);
             Mascota saved = mascotaRepository.save(updated);
+            if (saved == null) return null;
             return MascotaMapper.toDTO(saved);
         }).orElse(null);
     }
@@ -55,6 +59,7 @@ public class MascotaServiceImpl implements MascotaService {
     @Override
     @Transactional
     public void delete(Integer id) {
+        if (id == null) return;
         mascotaRepository.deleteById(id);
     }
 }
