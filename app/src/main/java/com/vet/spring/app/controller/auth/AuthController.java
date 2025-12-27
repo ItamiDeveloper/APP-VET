@@ -1,9 +1,8 @@
 package com.vet.spring.app.controller.auth;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,115 +11,85 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vet.spring.app.dto.auth.JwtResponse;
 import com.vet.spring.app.dto.auth.LoginRequest;
-import com.vet.spring.app.dto.auth.RefreshTokenRequest;
-import com.vet.spring.app.dto.usuarioDto.UsuarioDTO;
-import com.vet.spring.app.entity.usuario.RefreshToken;
-import com.vet.spring.app.entity.usuario.Usuario;
-import com.vet.spring.app.mapper.usuarioMapper.UsuarioMapper;
-import com.vet.spring.app.repository.usuarioRepository.UsuarioRepository;
+import com.vet.spring.app.security.CustomUserDetailsService;
 import com.vet.spring.app.security.JwtUtil;
-import com.vet.spring.app.security.UserDetailsImpl;
 import com.vet.spring.app.security.SuperAdminUserDetailsService;
-import com.vet.spring.app.service.usuarioService.RefreshTokenService;
+import com.vet.spring.app.security.UserDetailsImpl;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Autenticación", description = "Endpoints de login para usuarios y super administradores")
 public class AuthController {
 
-    private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-    private final RefreshTokenService refreshTokenService;
+    private final CustomUserDetailsService userDetailsService;
     private final SuperAdminUserDetailsService superAdminUserDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public AuthController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder,
-                         AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-                         RefreshTokenService refreshTokenService,
-                         SuperAdminUserDetailsService superAdminUserDetailsService) {
-        this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.refreshTokenService = refreshTokenService;
+    public AuthController(CustomUserDetailsService userDetailsService,
+                         SuperAdminUserDetailsService superAdminUserDetailsService,
+                         PasswordEncoder passwordEncoder,
+                         JwtUtil jwtUtil) {
+        this.userDetailsService = userDetailsService;
         this.superAdminUserDetailsService = superAdminUserDetailsService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
     
     /**
      * Login para usuarios de tenant (veterinarias)
      */
     @PostMapping("/tenant/login")
+    @Operation(
+        summary = "Login de usuario tenant",
+        description = "Autenticación para usuarios de veterinarias. Retorna JWT con tenantId."
+    )
     public ResponseEntity<JwtResponse> tenantLogin(@RequestBody LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
+        // Cargar usuario desde la tabla usuario
+        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(request.getUsername());
         
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        // Verificar password
+        if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+            throw new BadCredentialsException("Credenciales inválidas");
+        }
+        
         Integer tenantId = userDetails.getTenantId();
-        
-        // Generar token con tenantId incluido
         String token = jwtUtil.generateTokenWithTenant(userDetails, tenantId);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
         
-        return ResponseEntity.ok(new JwtResponse(token, refreshToken.getToken(), userDetails.getUsername()));
+        return ResponseEntity.ok(new JwtResponse(token, "Bearer", userDetails.getUsername(), tenantId != null ? tenantId.toString() : null));
     }
     
     /**
-     * Login para super administradores del sistema
+     * Login para super administradores
      */
     @PostMapping("/super-admin/login")
+    @Operation(
+        summary = "Login de super administrador",
+        description = "Autenticación para super administradores del sistema. Retorna JWT sin tenantId."
+    )
     public ResponseEntity<JwtResponse> superAdminLogin(@RequestBody LoginRequest request) {
-        try {
-            org.springframework.security.core.userdetails.UserDetails userDetails = 
-                superAdminUserDetailsService.loadUserByUsername(request.getUsername());
-            
-            // Verificar contraseña
-            if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
-                throw new RuntimeException("Credenciales inválidas");
-            }
-            
-            // Generar token de super admin (sin tenantId)
-            String token = jwtUtil.generateTokenForSuperAdmin(userDetails);
-            
-            return ResponseEntity.ok(new JwtResponse(token, null, userDetails.getUsername()));
-        } catch (Exception e) {
-            throw new RuntimeException("Error en autenticación de super admin: " + e.getMessage());
+        // Cargar super admin desde la tabla super_admin
+        UserDetails userDetails = superAdminUserDetailsService.loadUserByUsername(request.getUsername());
+        
+        // DEBUG: Log para verificar qué está pasando
+        System.out.println("=== DEBUG SUPER ADMIN LOGIN ===");
+        System.out.println("Username from request: " + request.getUsername());
+        System.out.println("Password from request: " + request.getPassword());
+        System.out.println("Hash from DB: " + userDetails.getPassword());
+        System.out.println("Hash length: " + (userDetails.getPassword() != null ? userDetails.getPassword().length() : "null"));
+        System.out.println("Password matches: " + passwordEncoder.matches(request.getPassword(), userDetails.getPassword()));
+        System.out.println("===============================");
+        
+        // Verificar password
+        if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+            throw new BadCredentialsException("Credenciales inválidas");
         }
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
         
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(userDetails);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+        String token = jwtUtil.generateTokenForSuperAdmin(userDetails);
         
-        return ResponseEntity.ok(new JwtResponse(token, refreshToken.getToken(), userDetails.getUsername()));
-    }
-
-    @PostMapping("/refresh")
-    public ResponseEntity<JwtResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
-        String requestRefreshToken = request.getRefreshToken();
-        
-        return refreshTokenService.findByToken(requestRefreshToken)
-            .map(refreshTokenService::verifyExpiration)
-            .map(RefreshToken::getUsuario)
-            .map(usuario -> {
-                String token = jwtUtil.generateToken(new UserDetailsImpl(usuario));
-                return ResponseEntity.ok(new JwtResponse(token, requestRefreshToken, usuario.getUsername()));
-            })
-            .orElseThrow(() -> new RuntimeException("Refresh token no encontrado"));
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<UsuarioDTO> register(@RequestBody UsuarioDTO dto) {
-        Usuario u = UsuarioMapper.toEntity(dto);
-        u.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
-        u.setEstado(Usuario.EstadoUsuario.ACTIVO); // Establecer estado por defecto
-        Usuario saved = usuarioRepository.save(u);
-        return ResponseEntity.ok(UsuarioMapper.toDTO(saved));
+        return ResponseEntity.ok(new JwtResponse(token, "Bearer", userDetails.getUsername(), null));
     }
 }

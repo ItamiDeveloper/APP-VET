@@ -1,7 +1,7 @@
 package com.vet.spring.app.entity.historia;
 
 import java.time.LocalDateTime;
-import com.vet.spring.app.entity.veterinaria.Veterinaria;
+import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.mascota.Mascota;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,8 +23,8 @@ public class ArchivoAdjunto {
     private Integer idArchivo;
 
     @ManyToOne
-    @JoinColumn(name = "id_veterinaria", nullable = false)
-    private Veterinaria veterinaria;
+    @JoinColumn(name = "id_tenant", nullable = false)
+    private Tenant tenant;
 
     @ManyToOne
     @JoinColumn(name = "id_historia", nullable = false)

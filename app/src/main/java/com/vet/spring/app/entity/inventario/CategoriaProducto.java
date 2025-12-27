@@ -1,6 +1,6 @@
 package com.vet.spring.app.entity.inventario;
 
-import com.vet.spring.app.entity.veterinaria.Estado;
+import com.vet.spring.app.entity.common.Estado;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

@@ -2,7 +2,7 @@ package com.vet.spring.app.mapper.ventaMapper;
 
 import com.vet.spring.app.dto.ventaDto.VentaDTO;
 import com.vet.spring.app.entity.venta.Venta;
-import com.vet.spring.app.entity.veterinaria.Veterinaria;
+import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.cliente.Cliente;
 
 public class VentaMapper {
@@ -11,7 +11,7 @@ public class VentaMapper {
         if (e == null) return null;
         VentaDTO d = new VentaDTO();
         d.setIdVenta(e.getIdVenta());
-        d.setIdVeterinaria(e.getVeterinaria() == null ? null : e.getVeterinaria().getIdVeterinaria());
+        d.setIdTenant(e.getTenant() == null ? null : e.getTenant().getIdTenant());
         d.setIdCliente(e.getCliente() == null ? null : e.getCliente().getIdCliente());
         d.setFecha(e.getFecha());
         d.setTotal(e.getTotal());
@@ -24,7 +24,7 @@ public class VentaMapper {
         if (d == null) return null;
         Venta e = new Venta();
         e.setIdVenta(d.getIdVenta());
-        if (d.getIdVeterinaria() != null) { Veterinaria v = new Veterinaria(); v.setIdVeterinaria(d.getIdVeterinaria()); e.setVeterinaria(v); }
+        if (d.getIdTenant() != null) { Tenant t = new Tenant(); t.setIdTenant(d.getIdTenant()); e.setTenant(t); }
         if (d.getIdCliente() != null) { Cliente c = new Cliente(); c.setIdCliente(d.getIdCliente()); e.setCliente(c); }
         e.setFecha(d.getFecha());
         e.setTotal(d.getTotal());

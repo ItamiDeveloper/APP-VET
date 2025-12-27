@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter @Setter
 public class ArchivoAdjuntoDTO {
     private Integer idArchivo;
-    private Integer idVeterinaria;
+    private Integer idTenant;
     private Integer idHistoria;
     private Integer idMascota;
     private String rutaArchivo;

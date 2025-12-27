@@ -2,7 +2,7 @@ package com.vet.spring.app.entity.venta;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import com.vet.spring.app.entity.veterinaria.Veterinaria;
+import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.cliente.Cliente;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,8 +24,8 @@ public class Venta {
     private Integer idVenta;
 
     @ManyToOne
-    @JoinColumn(name = "id_veterinaria", nullable = false)
-    private Veterinaria veterinaria;
+    @JoinColumn(name = "id_tenant", nullable = false)
+    private Tenant tenant;
 
     @ManyToOne
     @JoinColumn(name = "id_cliente", nullable = false)

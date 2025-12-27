@@ -10,8 +10,8 @@ import lombok.Setter;
 @Getter @Setter
 public class CompraDTO {
     private Integer idCompra;
-    @NotNull(message = "El campo 'idVeterinaria' no puede ser nulo")
-    private Integer idVeterinaria;
+    @NotNull(message = "El campo 'idTenant' no puede ser nulo")
+    private Integer idTenant;
     @NotNull(message = "El campo 'idProveedor' no puede ser nulo")
     private Integer idProveedor;
     @NotNull(message = "El campo 'fecha' no puede ser nulo")

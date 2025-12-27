@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter @Setter
 public class VentaDTO {
     private Integer idVenta;
-    private Integer idVeterinaria;
+    private Integer idTenant;
     private Integer idCliente;
     private LocalDateTime fecha;
     private BigDecimal total;
