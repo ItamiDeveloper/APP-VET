@@ -1,5 +1,6 @@
 package com.vet.spring.app.service.tenantService;
 
+import com.vet.spring.app.dto.tenantDto.MiSuscripcionDTO;
 import com.vet.spring.app.dto.tenantDto.TenantDTO;
 import com.vet.spring.app.dto.tenantDto.TenantRegistroDTO;
 import com.vet.spring.app.entity.tenant.Plan;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -211,6 +213,101 @@ public class TenantService {
                 .orElseThrow(() -> new RuntimeException("Tenant no encontrado"));
         tenant.setUsuariosActivos(tenant.getUsuariosActivos() + 1);
         tenantRepository.save(tenant);
+    }
+
+    /**
+     * Obtiene los datos del tenant autenticado (para vista de perfil)
+     */
+    public TenantDTO getMiVeterinaria(Integer tenantId) {
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Tenant no encontrado"));
+        return toDTO(tenant);
+    }
+
+    /**
+     * Actualiza los datos del tenant autenticado (perfil)
+     */
+    @Transactional
+    public TenantDTO actualizarMiVeterinaria(Integer tenantId, TenantDTO dto) {
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Tenant no encontrado"));
+        
+        // Solo actualizar campos que el tenant puede modificar
+        tenant.setNombreComercial(dto.getNombreComercial());
+        tenant.setRazonSocial(dto.getRazonSocial());
+        tenant.setTelefono(dto.getTelefono());
+        tenant.setEmailContacto(dto.getEmailContacto());
+        tenant.setDireccion(dto.getDireccion());
+        tenant.setCiudad(dto.getCiudad());
+        tenant.setLogoUrl(dto.getLogoUrl());
+        tenant.setColorPrimario(dto.getColorPrimario());
+        tenant.setColorSecundario(dto.getColorSecundario());
+        
+        tenant = tenantRepository.save(tenant);
+        return toDTO(tenant);
+    }
+
+    /**
+     * Obtiene información de la suscripción del tenant autenticado
+     */
+    public MiSuscripcionDTO getMiSuscripcion(Integer tenantId) {
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Tenant no encontrado"));
+        
+        // Obtener la suscripción activa
+        Suscripcion suscripcion = suscripcionRepository.findActiveSuscripcionByTenant(tenant)
+                .orElseThrow(() -> new RuntimeException("No se encontró suscripción activa"));
+        
+        Plan plan = tenant.getPlanActual();
+        
+        MiSuscripcionDTO dto = new MiSuscripcionDTO();
+        
+        // Información del plan
+        dto.setIdPlan(plan.getIdPlan());
+        dto.setNombrePlan(plan.getNombre());
+        dto.setDescripcionPlan(plan.getDescripcion());
+        dto.setPrecioMensual(plan.getPrecioMensual());
+        dto.setPrecioAnual(plan.getPrecioAnual());
+        
+        // Estado de suscripción
+        dto.setEstadoSuscripcion(tenant.getEstadoSuscripcion().name());
+        dto.setFechaInicio(suscripcion.getFechaInicio());
+        dto.setFechaFin(suscripcion.getFechaFin());
+        dto.setProximoPago(suscripcion.getFechaFin()); // La próxima fecha de pago es la fecha de fin
+        
+        // Límites del plan
+        dto.setMaxUsuarios(plan.getMaxUsuarios());
+        dto.setMaxDoctores(plan.getMaxDoctores());
+        dto.setMaxMascotas(plan.getMaxMascotas());
+        dto.setMaxAlmacenamientoMb(plan.getMaxAlmacenamientoMb());
+        
+        // Uso actual
+        dto.setUsuariosActivos(tenant.getUsuariosActivos());
+        dto.setDoctoresActivos(tenant.getDoctoresActivos());
+        dto.setMascotasRegistradas(tenant.getMascotasRegistradas());
+        dto.setAlmacenamientoUsadoMb(tenant.getAlmacenamientoUsadoMb());
+        
+        // Calcular porcentajes de uso
+        dto.setPorcentajeUsuarios((tenant.getUsuariosActivos() * 100.0) / plan.getMaxUsuarios());
+        dto.setPorcentajeDoctores((tenant.getDoctoresActivos() * 100.0) / plan.getMaxDoctores());
+        dto.setPorcentajeMascotas((tenant.getMascotasRegistradas() * 100.0) / plan.getMaxMascotas());
+        dto.setPorcentajeAlmacenamiento((tenant.getAlmacenamientoUsadoMb() * 100.0) / plan.getMaxAlmacenamientoMb());
+        
+        // Features del plan
+        dto.setTieneReportesAvanzados(plan.getTieneReportesAvanzados());
+        dto.setTieneApiAcceso(plan.getTieneApiAcceso());
+        dto.setTieneSoportePrioritario(plan.getTieneSoportePrioritario());
+        
+        // Calcular días restantes de trial si aplica
+        dto.setEnPeriodoTrial(tenant.getEstadoSuscripcion() == Tenant.EstadoSuscripcion.TRIAL);
+        if (dto.getEnPeriodoTrial() && tenant.getFechaRegistro() != null) {
+            // Calcular fecha fin de trial basado en días configurados
+            LocalDate fechaFinTrial = tenant.getFechaRegistro().toLocalDate().plusDays(tenant.getDiasTrial());
+            long diasRestantes = ChronoUnit.DAYS.between(LocalDate.now(), fechaFinTrial);
+            dto.setDiasRestantesTrial((int) Math.max(0, diasRestantes));
+        }
+        
+        return dto;
     }
 
     // Conversión DTO

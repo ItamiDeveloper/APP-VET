@@ -1,8 +1,10 @@
 package com.vet.spring.app.controller.tenant;
 
+import com.vet.spring.app.dto.tenantDto.MiSuscripcionDTO;
 import com.vet.spring.app.dto.tenantDto.TenantDTO;
 import com.vet.spring.app.dto.tenantDto.TenantRegistroDTO;
 import com.vet.spring.app.service.tenantService.TenantService;
+import com.vet.spring.app.tenant.TenantContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -124,5 +126,42 @@ public class TenantController {
     public ResponseEntity<Void> reactivarTenant(@PathVariable Integer id) {
         tenantService.reactivarTenant(id);
         return ResponseEntity.ok().build();
+    }
+
+    // ===============================================
+    // ENDPOINTS PARA TENANT (autenticado)
+    // ===============================================
+
+    @Operation(
+            summary = "Ver mi veterinaria",
+            description = "Obtiene los datos de la veterinaria del tenant autenticado.",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    @GetMapping("/tenant/mi-veterinaria")
+    public ResponseEntity<TenantDTO> getMiVeterinaria() {
+        Integer tenantId = TenantContext.getTenantId();
+        return ResponseEntity.ok(tenantService.getMiVeterinaria(tenantId));
+    }
+
+    @Operation(
+            summary = "Actualizar mi veterinaria",
+            description = "Actualiza los datos de la veterinaria del tenant autenticado.",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    @PutMapping("/tenant/mi-veterinaria")
+    public ResponseEntity<TenantDTO> actualizarMiVeterinaria(@RequestBody TenantDTO dto) {
+        Integer tenantId = TenantContext.getTenantId();
+        return ResponseEntity.ok(tenantService.actualizarMiVeterinaria(tenantId, dto));
+    }
+
+    @Operation(
+            summary = "Ver mi suscripción",
+            description = "Obtiene información detallada de la suscripción del tenant autenticado (plan, uso, límites).",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    @GetMapping("/tenant/mi-suscripcion")
+    public ResponseEntity<MiSuscripcionDTO> getMiSuscripcion() {
+        Integer tenantId = TenantContext.getTenantId();
+        return ResponseEntity.ok(tenantService.getMiSuscripcion(tenantId));
     }
 }
