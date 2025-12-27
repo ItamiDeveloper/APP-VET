@@ -1,42 +1,52 @@
 package com.vet.spring.app.entity.doctor;
 
 import com.vet.spring.app.entity.usuario.Usuario;
-import jakarta.persistence.Entity;
-import com.vet.spring.app.entity.veterinaria.Veterinaria;
-import com.vet.spring.app.entity.veterinaria.Estado;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.vet.spring.app.entity.tenant.Tenant;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
 
 @Entity
-@Table(name = "DOCTOR")
+@Table(name = "doctor")
 @Getter @Setter
 public class Doctor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_doctor")
     private Integer idDoctor;
 
     @ManyToOne
-    @JoinColumn(name = "id_veterinaria", nullable = false)
-    private Veterinaria veterinaria;
+    @JoinColumn(name = "id_tenant", nullable = false)
+    private Tenant tenant;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
+    @Column(nullable = false, length = 100)
     private String nombres;
+    
+    @Column(nullable = false, length = 100)
     private String apellidos;
+    
+    @Column(length = 50)
     private String colegiatura;
+    
+    @Column(length = 100)
     private String especialidad;
+    
+    @Column(length = 30)
+    private String telefono;
+    
+    @Column(length = 100)
+    private String email;
 
     @Enumerated(EnumType.STRING)
-    private Estado estado;
+    @Column(nullable = false)
+    private EstadoDoctor estado = EstadoDoctor.ACTIVO;
+
+    public enum EstadoDoctor {
+        ACTIVO, INACTIVO
+    }
 }

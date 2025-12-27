@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter @Setter
 public class MascotaDTO {
     private Integer idMascota;
-    private Integer idVeterinaria;
+    private Integer idTenant;
     private Integer idCliente;
     private Integer idRaza;
     private String nombre;

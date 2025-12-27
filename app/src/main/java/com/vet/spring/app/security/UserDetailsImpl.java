@@ -46,4 +46,10 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() { return user.getEstado() != null; }
 
     public Integer getId() { return user.getIdUsuario(); }
+    
+    public Integer getTenantId() { 
+        return user.getTenant() != null ? user.getTenant().getIdTenant() : null; 
+    }
+    
+    public Usuario getUsuario() { return user; }
 }

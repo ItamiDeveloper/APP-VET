@@ -2,7 +2,7 @@ package com.vet.spring.app.mapper.clienteMapper;
 
 import com.vet.spring.app.dto.clienteDto.ClienteDTO;
 import com.vet.spring.app.entity.cliente.Cliente;
-import com.vet.spring.app.entity.veterinaria.Veterinaria;
+import com.vet.spring.app.entity.tenant.Tenant;
 
 public class ClienteMapper {
 
@@ -10,11 +10,11 @@ public class ClienteMapper {
         if (e == null) return null;
         ClienteDTO d = new ClienteDTO();
         d.setIdCliente(e.getIdCliente());
-        d.setIdVeterinaria(e.getVeterinaria() == null ? null : e.getVeterinaria().getIdVeterinaria());
+        d.setIdTenant(e.getTenant() == null ? null : e.getTenant().getIdTenant());
         d.setNombres(e.getNombres());
         d.setApellidos(e.getApellidos());
         d.setTipoDocumento(e.getTipoDocumento());
-        d.setDocumento(e.getDocumento());
+        d.setNumeroDocumento(e.getNumeroDocumento());
         d.setTelefono(e.getTelefono());
         d.setEmail(e.getEmail());
         d.setDireccion(e.getDireccion());
@@ -26,15 +26,15 @@ public class ClienteMapper {
         if (d == null) return null;
         Cliente e = new Cliente();
         e.setIdCliente(d.getIdCliente());
-        if (d.getIdVeterinaria() != null) { Veterinaria v = new Veterinaria(); v.setIdVeterinaria(d.getIdVeterinaria()); e.setVeterinaria(v); }
+        if (d.getIdTenant() != null) { Tenant t = new Tenant(); t.setIdTenant(d.getIdTenant()); e.setTenant(t); }
         e.setNombres(d.getNombres());
         e.setApellidos(d.getApellidos());
         e.setTipoDocumento(d.getTipoDocumento());
-        e.setDocumento(d.getDocumento());
+        e.setNumeroDocumento(d.getNumeroDocumento());
         e.setTelefono(d.getTelefono());
         e.setEmail(d.getEmail());
         e.setDireccion(d.getDireccion());
-        if (d.getEstado() != null) e.setEstado(Enum.valueOf(com.vet.spring.app.entity.veterinaria.Estado.class, d.getEstado()));
+        if (d.getEstado() != null) e.setEstado(Enum.valueOf(Cliente.EstadoCliente.class, d.getEstado()));
         return e;
     }
 }

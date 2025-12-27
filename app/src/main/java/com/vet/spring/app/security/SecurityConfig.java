@@ -19,16 +19,22 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.http.HttpMethod;
 
+import com.vet.spring.app.tenant.TenantFilter;
+
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final TenantFilter tenantFilter;
 
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthFilter) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, 
+                         JwtAuthenticationFilter jwtAuthFilter,
+                         TenantFilter tenantFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthFilter = jwtAuthFilter;
+        this.tenantFilter = tenantFilter;
     }
 
     @Bean
@@ -38,12 +44,19 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/auth/**", "/actuator/**", "/error",
-                    "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                // Rutas públicas (landing page, registro, login)
+                .requestMatchers("/", "/api/auth/**", "/api/public/**").permitAll()
+                // Swagger y actuator
+                .requestMatchers("/actuator/**", "/error", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                // Rutas de super admin
+                .requestMatchers("/api/super-admin/**").hasRole("SUPER_ADMIN")
+                // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
+            // Agregar TenantFilter antes de JwtAuthenticationFilter
+            .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

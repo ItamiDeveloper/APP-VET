@@ -3,7 +3,7 @@ package com.vet.spring.app.mapper.usuarioMapper;
 import com.vet.spring.app.dto.usuarioDto.UsuarioDTO;
 import com.vet.spring.app.entity.usuario.Usuario;
 import com.vet.spring.app.entity.usuario.Rol;
-import com.vet.spring.app.entity.veterinaria.Veterinaria;
+import com.vet.spring.app.entity.tenant.Tenant;
 
 public class UsuarioMapper {
 
@@ -11,7 +11,7 @@ public class UsuarioMapper {
         if (e == null) return null;
         UsuarioDTO d = new UsuarioDTO();
         d.setIdUsuario(e.getIdUsuario());
-        d.setIdVeterinaria(e.getVeterinaria() == null ? null : e.getVeterinaria().getIdVeterinaria());
+        d.setIdTenant(e.getTenant() == null ? null : e.getTenant().getIdTenant());
         d.setIdRol(e.getRol() == null ? null : e.getRol().getIdRol());
         d.setUsername(e.getUsername());
         d.setEmail(e.getEmail());
@@ -23,7 +23,7 @@ public class UsuarioMapper {
         if (d == null) return null;
         Usuario e = new Usuario();
         e.setIdUsuario(d.getIdUsuario());
-        if (d.getIdVeterinaria() != null) { Veterinaria v = new Veterinaria(); v.setIdVeterinaria(d.getIdVeterinaria()); e.setVeterinaria(v); }
+        if (d.getIdTenant() != null) { Tenant t = new Tenant(); t.setIdTenant(d.getIdTenant()); e.setTenant(t); }
         if (d.getIdRol() != null) { Rol r = new Rol(); r.setIdRol(d.getIdRol()); e.setRol(r); }
         e.setUsername(d.getUsername());
         e.setEmail(d.getEmail());

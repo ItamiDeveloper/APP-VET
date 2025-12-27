@@ -16,12 +16,13 @@ import com.vet.spring.app.dto.auth.RefreshTokenRequest;
 import com.vet.spring.app.dto.usuarioDto.UsuarioDTO;
 import com.vet.spring.app.entity.usuario.RefreshToken;
 import com.vet.spring.app.entity.usuario.Usuario;
-import com.vet.spring.app.entity.veterinaria.Estado;
 import com.vet.spring.app.mapper.usuarioMapper.UsuarioMapper;
 import com.vet.spring.app.repository.usuarioRepository.UsuarioRepository;
 import com.vet.spring.app.security.JwtUtil;
 import com.vet.spring.app.security.UserDetailsImpl;
+import com.vet.spring.app.security.SuperAdminUserDetailsService;
 import com.vet.spring.app.service.usuarioService.RefreshTokenService;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -31,15 +32,60 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final SuperAdminUserDetailsService superAdminUserDetailsService;
 
     public AuthController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder,
                          AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-                         RefreshTokenService refreshTokenService) {
+                         RefreshTokenService refreshTokenService,
+                         SuperAdminUserDetailsService superAdminUserDetailsService) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
+        this.superAdminUserDetailsService = superAdminUserDetailsService;
+    }
+    
+    /**
+     * Login para usuarios de tenant (veterinarias)
+     */
+    @PostMapping("/tenant/login")
+    public ResponseEntity<JwtResponse> tenantLogin(@RequestBody LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
+        
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Integer tenantId = userDetails.getTenantId();
+        
+        // Generar token con tenantId incluido
+        String token = jwtUtil.generateTokenWithTenant(userDetails, tenantId);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+        
+        return ResponseEntity.ok(new JwtResponse(token, refreshToken.getToken(), userDetails.getUsername()));
+    }
+    
+    /**
+     * Login para super administradores del sistema
+     */
+    @PostMapping("/super-admin/login")
+    public ResponseEntity<JwtResponse> superAdminLogin(@RequestBody LoginRequest request) {
+        try {
+            org.springframework.security.core.userdetails.UserDetails userDetails = 
+                superAdminUserDetailsService.loadUserByUsername(request.getUsername());
+            
+            // Verificar contraseña
+            if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+                throw new RuntimeException("Credenciales inválidas");
+            }
+            
+            // Generar token de super admin (sin tenantId)
+            String token = jwtUtil.generateTokenForSuperAdmin(userDetails);
+            
+            return ResponseEntity.ok(new JwtResponse(token, null, userDetails.getUsername()));
+        } catch (Exception e) {
+            throw new RuntimeException("Error en autenticación de super admin: " + e.getMessage());
+        }
     }
 
     @PostMapping("/login")
@@ -73,7 +119,7 @@ public class AuthController {
     public ResponseEntity<UsuarioDTO> register(@RequestBody UsuarioDTO dto) {
         Usuario u = UsuarioMapper.toEntity(dto);
         u.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
-        u.setEstado(Estado.ACTIVO); // Establecer estado por defecto
+        u.setEstado(Usuario.EstadoUsuario.ACTIVO); // Establecer estado por defecto
         Usuario saved = usuarioRepository.save(u);
         return ResponseEntity.ok(UsuarioMapper.toDTO(saved));
     }

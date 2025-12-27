@@ -35,7 +35,7 @@ public class DoctorServiceImpl implements DoctorService {
     private DoctorDTO convertToDTO(Doctor doctor) {
         DoctorDTO dto = new DoctorDTO();
         dto.setIdDoctor(doctor.getIdDoctor());
-        dto.setIdVeterinaria(doctor.getVeterinaria().getIdVeterinaria());
+        dto.setIdTenant(doctor.getTenant().getIdTenant());
         if (doctor.getUsuario() != null) {
             dto.setIdUsuario(doctor.getUsuario().getIdUsuario());
         }

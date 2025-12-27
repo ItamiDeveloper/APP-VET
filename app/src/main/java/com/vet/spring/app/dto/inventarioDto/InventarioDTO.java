@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter @Setter
 public class InventarioDTO {
     private Integer idInventario;
-    private Integer idVeterinaria;
+    private Integer idTenant;
     private Integer idProducto;
     private Integer stockActual;
     private Integer stockMinimo;

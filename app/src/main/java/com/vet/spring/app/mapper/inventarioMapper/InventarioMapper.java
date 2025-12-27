@@ -2,7 +2,7 @@ package com.vet.spring.app.mapper.inventarioMapper;
 
 import com.vet.spring.app.dto.inventarioDto.InventarioDTO;
 import com.vet.spring.app.entity.inventario.Inventario;
-import com.vet.spring.app.entity.veterinaria.Veterinaria;
+import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.inventario.Producto;
 
 public class InventarioMapper {
@@ -11,7 +11,7 @@ public class InventarioMapper {
         if (e == null) return null;
         InventarioDTO d = new InventarioDTO();
         d.setIdInventario(e.getIdInventario());
-        d.setIdVeterinaria(e.getVeterinaria() == null ? null : e.getVeterinaria().getIdVeterinaria());
+        d.setIdTenant(e.getTenant() == null ? null : e.getTenant().getIdTenant());
         d.setIdProducto(e.getProducto() == null ? null : e.getProducto().getIdProducto());
         d.setStockActual(e.getStockActual());
         d.setStockMinimo(e.getStockMinimo());
@@ -23,7 +23,7 @@ public class InventarioMapper {
         if (d == null) return null;
         Inventario e = new Inventario();
         e.setIdInventario(d.getIdInventario());
-        if (d.getIdVeterinaria() != null) { Veterinaria v = new Veterinaria(); v.setIdVeterinaria(d.getIdVeterinaria()); e.setVeterinaria(v); }
+        if (d.getIdTenant() != null) { Tenant t = new Tenant(); t.setIdTenant(d.getIdTenant()); e.setTenant(t); }
         if (d.getIdProducto() != null) { Producto p = new Producto(); p.setIdProducto(d.getIdProducto()); e.setProducto(p); }
         e.setStockActual(d.getStockActual());
         e.setStockMinimo(d.getStockMinimo());

@@ -1,33 +1,27 @@
 package com.vet.spring.app.entity.mascota;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import com.vet.spring.app.entity.cliente.Cliente;
-import com.vet.spring.app.entity.veterinaria.Veterinaria;
-import com.vet.spring.app.entity.veterinaria.Estado;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.vet.spring.app.entity.tenant.Tenant;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
 
 @Entity
-@Table(name = "MASCOTA")
+@Table(name = "mascota")
 @Getter @Setter
 public class Mascota {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_mascota")
     private Integer idMascota;
 
     @ManyToOne
-    @JoinColumn(name = "id_veterinaria", nullable = false)
-    private Veterinaria veterinaria;
+    @JoinColumn(name = "id_tenant", nullable = false)
+    private Tenant tenant;
 
     @ManyToOne
     @JoinColumn(name = "id_cliente", nullable = false)
@@ -37,11 +31,38 @@ public class Mascota {
     @JoinColumn(name = "id_raza", nullable = false)
     private Raza raza;
 
+    @Column(nullable = false, length = 100)
     private String nombre;
-    private String sexo;
+    
+    @Column(length = 20)
+    private String sexo = "MACHO";
+    
+    @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
+    
+    @Column(length = 50)
     private String color;
+    
+    @Column(name = "peso_kg", precision = 5, scale = 2)
+    private BigDecimal pesoKg;
+    
+    @Column(length = 50)
+    private String microchip;
+    
+    @Column(name = "foto_url")
+    private String fotoUrl;
+    
+    @Column(columnDefinition = "TEXT")
+    private String observaciones;
 
     @Enumerated(EnumType.STRING)
-    private Estado estado;
+    @Column(nullable = false)
+    private EstadoMascota estado = EstadoMascota.ACTIVO;
+    
+    @Column(name = "fecha_registro", nullable = false, updatable = false)
+    private LocalDateTime fechaRegistro = LocalDateTime.now();
+
+    public enum EstadoMascota {
+        ACTIVO, FALLECIDO, ADOPTADO, PERDIDO
+    }
 }

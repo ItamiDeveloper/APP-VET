@@ -2,7 +2,7 @@ package com.vet.spring.app.mapper.historiaMapper;
 
 import com.vet.spring.app.dto.historiaDto.HistoriaClinicaDTO;
 import com.vet.spring.app.entity.historia.HistoriaClinica;
-import com.vet.spring.app.entity.veterinaria.Veterinaria;
+import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.mascota.Mascota;
 import com.vet.spring.app.entity.doctor.Doctor;
 
@@ -12,7 +12,7 @@ public class HistoriaClinicaMapper {
         if (e == null) return null;
         HistoriaClinicaDTO d = new HistoriaClinicaDTO();
         d.setIdHistoria(e.getIdHistoria());
-        d.setIdVeterinaria(e.getVeterinaria() == null ? null : e.getVeterinaria().getIdVeterinaria());
+        d.setIdTenant(e.getTenant() == null ? null : e.getTenant().getIdTenant());
         d.setIdMascota(e.getMascota() == null ? null : e.getMascota().getIdMascota());
         d.setIdDoctor(e.getDoctor() == null ? null : e.getDoctor().getIdDoctor());
         d.setFechaAtencion(e.getFechaAtencion());
@@ -26,7 +26,7 @@ public class HistoriaClinicaMapper {
         if (d == null) return null;
         HistoriaClinica e = new HistoriaClinica();
         e.setIdHistoria(d.getIdHistoria());
-        if (d.getIdVeterinaria() != null) { Veterinaria v = new Veterinaria(); v.setIdVeterinaria(d.getIdVeterinaria()); e.setVeterinaria(v); }
+        if (d.getIdTenant() != null) { Tenant t = new Tenant(); t.setIdTenant(d.getIdTenant()); e.setTenant(t); }
         if (d.getIdMascota() != null) { Mascota m = new Mascota(); m.setIdMascota(d.getIdMascota()); e.setMascota(m); }
         if (d.getIdDoctor() != null) { Doctor dr = new Doctor(); dr.setIdDoctor(d.getIdDoctor()); e.setDoctor(dr); }
         e.setFechaAtencion(d.getFechaAtencion());

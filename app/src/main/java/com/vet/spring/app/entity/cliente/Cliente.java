@@ -1,40 +1,54 @@
 package com.vet.spring.app.entity.cliente;
 
-import jakarta.persistence.Entity;
-import com.vet.spring.app.entity.veterinaria.Veterinaria;
-import com.vet.spring.app.entity.veterinaria.Estado;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.vet.spring.app.entity.tenant.Tenant;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "CLIENTE")
+@Table(name = "cliente")
 @Getter @Setter
 public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cliente")
     private Integer idCliente;
 
     @ManyToOne
-    @JoinColumn(name = "id_veterinaria", nullable = false)
-    private Veterinaria veterinaria;
+    @JoinColumn(name = "id_tenant", nullable = false)
+    private Tenant tenant;
 
+    @Column(nullable = false, length = 100)
     private String nombres;
+    
+    @Column(nullable = false, length = 100)
     private String apellidos;
-    private String tipoDocumento;
-    private String documento;
+    
+    @Column(name = "tipo_documento", length = 20)
+    private String tipoDocumento = "DNI";
+    
+    @Column(name = "numero_documento", length = 20)
+    private String numeroDocumento;
+    
+    @Column(length = 30)
     private String telefono;
+    
+    @Column(length = 100)
     private String email;
+    
+    @Column(length = 255)
     private String direccion;
+    
+    @Column(name = "fecha_registro", nullable = false, updatable = false)
+    private LocalDateTime fechaRegistro = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
-    private Estado estado;
+    @Column(nullable = false)
+    private EstadoCliente estado = EstadoCliente.ACTIVO;
+
+    public enum EstadoCliente {
+        ACTIVO, INACTIVO
+    }
 }
