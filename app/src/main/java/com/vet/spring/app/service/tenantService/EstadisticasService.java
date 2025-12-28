@@ -3,14 +3,15 @@ package com.vet.spring.app.service.tenantService;
 import com.vet.spring.app.dto.estadisticasDto.*;
 import com.vet.spring.app.entity.cita.Cita;
 import com.vet.spring.app.entity.venta.Venta;
-import com.vet.spring.app.repository.CitaRepository;
-import com.vet.spring.app.repository.ClienteRepository;
-import com.vet.spring.app.repository.MascotaRepository;
-import com.vet.spring.app.repository.VentaRepository;
+import com.vet.spring.app.repository.citaRepository.CitaRepository;
+import com.vet.spring.app.repository.clienteRepository.ClienteRepository;
+import com.vet.spring.app.repository.mascotaRepository.MascotaRepository;
+import com.vet.spring.app.repository.ventaRepository.VentaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.*;
@@ -42,16 +43,16 @@ public class EstadisticasService {
         // Calcular ingresos totales de las ventas
         Double totalIngresos = ventaRepository.findAll().stream()
                 .filter(v -> v.getTenant().getIdTenant().equals(tenantId))
-                .mapToDouble(Venta::getTotal)
+                .map(Venta::getTotal)
+                .filter(Objects::nonNull)
+                .mapToDouble(BigDecimal::doubleValue)
                 .sum();
         
         return new DashboardStatsDTO(
                 totalClientes,
                 totalMascotas,
                 totalCitas,
-                totalIngresos,
-                1L, // Total veterinarias (para tenant es 1)
-                0L  // Total planes (no aplicable para tenant)
+                totalIngresos
         );
     }
 
@@ -60,7 +61,7 @@ public class EstadisticasService {
         LocalDateTime hace6Meses = LocalDateTime.now().minusMonths(6);
         List<Venta> ventas = ventaRepository.findAll().stream()
                 .filter(v -> v.getTenant().getIdTenant().equals(tenantId))
-                .filter(v -> v.getFechaVenta().isAfter(hace6Meses))
+                .filter(v -> v.getFecha() != null && v.getFecha().isAfter(hace6Meses))
                 .collect(Collectors.toList());
 
         Map<String, Double> ingresosPorMes = new LinkedHashMap<>();
@@ -68,15 +69,16 @@ public class EstadisticasService {
         // Inicializar últimos 6 meses con 0
         for (int i = 5; i >= 0; i--) {
             LocalDateTime mes = LocalDateTime.now().minusMonths(i);
-            String nombreMes = mes.getMonth().getDisplayName(TextStyle.SHORT, new Locale("es", "ES"));
+            String nombreMes = mes.getMonth().getDisplayName(TextStyle.SHORT, Locale.forLanguageTag("es-ES"));
             ingresosPorMes.put(nombreMes, 0.0);
         }
 
         // Agregar ingresos reales
         for (Venta venta : ventas) {
-            String mes = venta.getFechaVenta().getMonth()
-                    .getDisplayName(TextStyle.SHORT, new Locale("es", "ES"));
-            ingresosPorMes.merge(mes, venta.getTotal(), Double::sum);
+            String mes = venta.getFecha().getMonth()
+                    .getDisplayName(TextStyle.SHORT, Locale.forLanguageTag("es-ES"));
+            double ingresoActual = venta.getTotal() != null ? venta.getTotal().doubleValue() : 0.0;
+            ingresosPorMes.merge(mes, ingresoActual, Double::sum);
         }
 
         return ingresosPorMes.entrySet().stream()
@@ -104,16 +106,17 @@ public class EstadisticasService {
     @Transactional(readOnly = true)
     public List<MascotasDistribucionDTO> getMascotasDistribucion(Integer tenantId) {
         // Distribución de mascotas por cliente
-        return mascotaRepository.findAll().stream()
+        Map<String, Long> mascotasPorCliente = mascotaRepository.findAll().stream()
                 .filter(m -> m.getTenant().getIdTenant().equals(tenantId))
                 .collect(Collectors.groupingBy(
-                        m -> m.getCliente().getNombre() + " " + m.getCliente().getApellido(),
+                        m -> m.getCliente().getNombres() + " " + m.getCliente().getApellidos(),
                         Collectors.counting()
-                ))
-                .entrySet().stream()
+                ));
+        
+        return mascotasPorCliente.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
                 .limit(10) // Top 10 clientes con más mascotas
                 .map(e -> new MascotasDistribucionDTO(e.getKey(), e.getValue()))
-                .sorted(Comparator.comparing(MascotasDistribucionDTO::getValue).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -122,20 +125,19 @@ public class EstadisticasService {
         // Obtener últimas citas creadas como actividad reciente
         return citaRepository.findAll().stream()
                 .filter(c -> c.getTenant().getIdTenant().equals(tenantId))
-                .sorted(Comparator.comparing(Cita::getCreatedAt).reversed())
+                .sorted(Comparator.comparing(Cita::getFechaCreacion, Comparator.nullsLast(Comparator.naturalOrder())).reversed())
                 .limit(10)
                 .map(cita -> {
                     String descripcion = String.format(
                             "Cita con %s para %s - %s",
-                            cita.getDoctor().getNombre(),
+                            cita.getDoctor().getNombres() + " " + cita.getDoctor().getApellidos(),
                             cita.getMascota().getNombre(),
                             cita.getEstado()
                     );
                     return new ActividadRecienteDTO(
-                            cita.getId().longValue(),
+                            "CITA",
                             descripcion,
-                            cita.getCreatedAt(),
-                            "CREATE"
+                            cita.getFechaCreacion()
                     );
                 })
                 .collect(Collectors.toList());

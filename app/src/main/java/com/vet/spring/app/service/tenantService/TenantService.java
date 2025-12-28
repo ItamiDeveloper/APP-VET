@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -254,11 +255,14 @@ public class TenantService {
         Tenant tenant = tenantRepository.findById(tenantId)
                 .orElseThrow(() -> new RuntimeException("Tenant no encontrado"));
         
-        // Obtener la suscripción activa
-        Suscripcion suscripcion = suscripcionRepository.findActiveSuscripcionByTenant(tenant)
-                .orElseThrow(() -> new RuntimeException("No se encontró suscripción activa"));
-        
         Plan plan = tenant.getPlanActual();
+        if (plan == null) {
+            throw new RuntimeException("El tenant no tiene un plan asignado");
+        }
+        
+        // Obtener la suscripción activa (puede ser null si es nuevo)
+        Optional<Suscripcion> suscripcionOpt = suscripcionRepository.findActiveSuscripcionByTenant(tenant);
+        Suscripcion suscripcion = suscripcionOpt.orElse(null);
         
         MiSuscripcionDTO dto = new MiSuscripcionDTO();
         
@@ -271,9 +275,15 @@ public class TenantService {
         
         // Estado de suscripción
         dto.setEstadoSuscripcion(tenant.getEstadoSuscripcion().name());
-        dto.setFechaInicio(suscripcion.getFechaInicio());
-        dto.setFechaFin(suscripcion.getFechaFin());
-        dto.setProximoPago(suscripcion.getFechaFin()); // La próxima fecha de pago es la fecha de fin
+        if (suscripcion != null) {
+            dto.setFechaInicio(suscripcion.getFechaInicio());
+            dto.setFechaFin(suscripcion.getFechaFin());
+            dto.setProximoPago(suscripcion.getFechaFin()); // La próxima fecha de pago es la fecha de fin
+        } else {
+            dto.setFechaInicio(tenant.getFechaActivacion() != null ? tenant.getFechaActivacion().toLocalDate() : null);
+            dto.setFechaFin(null);
+            dto.setProximoPago(null);
+        }
         
         // Límites del plan
         dto.setMaxUsuarios(plan.getMaxUsuarios());

@@ -12,6 +12,5 @@ public class DashboardStatsDTO {
     private Long totalMascotas;
     private Long totalCitas;
     private Double totalIngresos;
-    private Long totalVeterinarias;
-    private Long totalPlanes;
+    // totalVeterinarias y totalPlanes removidos - solo para Super Admin
 }
