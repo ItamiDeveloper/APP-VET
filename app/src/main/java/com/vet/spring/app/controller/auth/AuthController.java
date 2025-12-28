@@ -40,6 +40,49 @@ public class AuthController {
     }
     
     /**
+     * DEBUG: Verificar hash de password
+     */
+    @PostMapping("/debug-password")
+    public ResponseEntity<?> debugPassword(@RequestBody LoginRequest request) {
+        try {
+            UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(request.getUsername());
+            String hashFromDB = userDetails.getPassword();
+            boolean matches = passwordEncoder.matches(request.getPassword(), hashFromDB);
+            
+            return ResponseEntity.ok(new java.util.HashMap<String, Object>() {{
+                put("username", request.getUsername());
+                put("passwordProvided", request.getPassword());
+                put("hashFromDB", hashFromDB);
+                put("hashLength", hashFromDB != null ? hashFromDB.length() : 0);
+                put("matches", matches);
+                put("tenantId", userDetails.getTenantId());
+            }});
+        } catch (Exception e) {
+            return ResponseEntity.ok(new java.util.HashMap<String, Object>() {{
+                put("error", e.getMessage());
+                put("exception", e.getClass().getName());
+            }});
+        }
+    }
+    
+    /**
+     * DEBUG: Generar hash para una contraseña
+     */
+    @PostMapping("/generate-hash")
+    public ResponseEntity<?> generateHash(@RequestBody LoginRequest request) {
+        String newHash = passwordEncoder.encode(request.getPassword());
+        boolean testMatch = passwordEncoder.matches(request.getPassword(), newHash);
+        
+        return ResponseEntity.ok(new java.util.HashMap<String, Object>() {{
+            put("password", request.getPassword());
+            put("newHash", newHash);
+            put("hashLength", newHash.length());
+            put("testMatches", testMatch);
+            put("sqlUpdate", "UPDATE usuario SET password_hash = '" + newHash + "' WHERE username = '" + request.getUsername() + "';");
+        }});
+    }
+    
+    /**
      * Login universal - detecta automáticamente si es tenant o super admin
      */
     @PostMapping("/login")
@@ -55,7 +98,7 @@ public class AuthController {
             if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
                 Integer tenantId = userDetails.getTenantId();
                 String token = jwtUtil.generateTokenWithTenant(userDetails, tenantId);
-                return ResponseEntity.ok(new JwtResponse(token, "Bearer", userDetails.getUsername(), tenantId != null ? tenantId.toString() : null));
+                return ResponseEntity.ok(new JwtResponse(token, null, userDetails.getUsername(), tenantId != null ? tenantId.toString() : null));
             }
         } catch (Exception e) {
             // Si falla, intentar como super admin
@@ -64,7 +107,7 @@ public class AuthController {
                 
                 if (passwordEncoder.matches(request.getPassword(), superAdminDetails.getPassword())) {
                     String token = jwtUtil.generateTokenForSuperAdmin(superAdminDetails);
-                    return ResponseEntity.ok(new JwtResponse(token, "Bearer", superAdminDetails.getUsername(), null));
+                    return ResponseEntity.ok(new JwtResponse(token, null, superAdminDetails.getUsername(), null));
                 }
             } catch (Exception ex) {
                 // Ignora si no existe como super admin
@@ -90,11 +133,11 @@ public class AuthController {
         if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
             throw new BadCredentialsException("Credenciales inválidas");
         }
-        
+
         Integer tenantId = userDetails.getTenantId();
         String token = jwtUtil.generateTokenWithTenant(userDetails, tenantId);
-        
-        return ResponseEntity.ok(new JwtResponse(token, "Bearer", userDetails.getUsername(), tenantId != null ? tenantId.toString() : null));
+
+        return ResponseEntity.ok(new JwtResponse(token, null, userDetails.getUsername(), tenantId != null ? tenantId.toString() : null));
     }
     
     /**
@@ -116,6 +159,6 @@ public class AuthController {
         
         String token = jwtUtil.generateTokenForSuperAdmin(userDetails);
         
-        return ResponseEntity.ok(new JwtResponse(token, "Bearer", userDetails.getUsername(), null));
+        return ResponseEntity.ok(new JwtResponse(token, null, userDetails.getUsername(), null));
     }
 }
