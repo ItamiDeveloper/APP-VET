@@ -3,10 +3,12 @@ package com.vet.spring.app.mapper.mascotaMapper;
 import com.vet.spring.app.dto.mascotaDto.RazaDTO;
 import com.vet.spring.app.entity.mascota.Raza;
 import com.vet.spring.app.entity.mascota.Especie;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RazaMapper {
 
-    public static RazaDTO toDTO(Raza e) {
+    public RazaDTO toDTO(Raza e) {
         if (e == null) return null;
         RazaDTO d = new RazaDTO();
         d.setIdRaza(e.getIdRaza());
@@ -16,7 +18,7 @@ public class RazaMapper {
         return d;
     }
 
-    public static Raza toEntity(RazaDTO d) {
+    public Raza toEntity(RazaDTO d) {
         if (d == null) return null;
         Raza e = new Raza();
         e.setIdRaza(d.getIdRaza());

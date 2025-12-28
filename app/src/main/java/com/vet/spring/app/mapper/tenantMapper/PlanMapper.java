@@ -2,10 +2,12 @@ package com.vet.spring.app.mapper.tenantMapper;
 
 import com.vet.spring.app.dto.planDto.PlanDTO;
 import com.vet.spring.app.entity.tenant.Plan;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PlanMapper {
 
-    public static PlanDTO toDTO(Plan e) {
+    public PlanDTO toDTO(Plan e) {
         if (e == null) return null;
         PlanDTO d = new PlanDTO();
         d.setIdPlan(e.getIdPlan());
@@ -18,7 +20,7 @@ public class PlanMapper {
         return d;
     }
 
-    public static Plan toEntity(PlanDTO d) {
+    public Plan toEntity(PlanDTO d) {
         if (d == null) return null;
         Plan e = new Plan();
         e.setIdPlan(d.getIdPlan());

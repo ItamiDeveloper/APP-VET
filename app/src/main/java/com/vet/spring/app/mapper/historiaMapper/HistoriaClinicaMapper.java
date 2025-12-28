@@ -5,10 +5,12 @@ import com.vet.spring.app.entity.historia.HistoriaClinica;
 import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.mascota.Mascota;
 import com.vet.spring.app.entity.doctor.Doctor;
+import org.springframework.stereotype.Component;
 
+@Component
 public class HistoriaClinicaMapper {
 
-    public static HistoriaClinicaDTO toDTO(HistoriaClinica e) {
+    public HistoriaClinicaDTO toDTO(HistoriaClinica e) {
         if (e == null) return null;
         HistoriaClinicaDTO d = new HistoriaClinicaDTO();
         d.setIdHistoria(e.getIdHistoria());
@@ -22,7 +24,7 @@ public class HistoriaClinicaMapper {
         return d;
     }
 
-    public static HistoriaClinica toEntity(HistoriaClinicaDTO d) {
+    public HistoriaClinica toEntity(HistoriaClinicaDTO d) {
         if (d == null) return null;
         HistoriaClinica e = new HistoriaClinica();
         e.setIdHistoria(d.getIdHistoria());

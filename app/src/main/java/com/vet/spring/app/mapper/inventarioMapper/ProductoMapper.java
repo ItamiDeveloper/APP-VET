@@ -3,10 +3,12 @@ package com.vet.spring.app.mapper.inventarioMapper;
 import com.vet.spring.app.dto.inventarioDto.ProductoDTO;
 import com.vet.spring.app.entity.inventario.Producto;
 import com.vet.spring.app.entity.inventario.CategoriaProducto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProductoMapper {
 
-    public static ProductoDTO toDTO(Producto e) {
+    public ProductoDTO toDTO(Producto e) {
         if (e == null) return null;
         ProductoDTO d = new ProductoDTO();
         d.setIdProducto(e.getIdProducto());
@@ -19,7 +21,7 @@ public class ProductoMapper {
         return d;
     }
 
-    public static Producto toEntity(ProductoDTO d) {
+    public Producto toEntity(ProductoDTO d) {
         if (d == null) return null;
         Producto e = new Producto();
         e.setIdProducto(d.getIdProducto());

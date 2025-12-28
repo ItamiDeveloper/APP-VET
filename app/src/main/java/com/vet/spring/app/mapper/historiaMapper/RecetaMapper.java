@@ -6,10 +6,12 @@ import com.vet.spring.app.entity.historia.RecetaEstado;
 import com.vet.spring.app.entity.historia.HistoriaClinica;
 import com.vet.spring.app.entity.doctor.Doctor;
 import com.vet.spring.app.entity.mascota.Mascota;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RecetaMapper {
 
-    public static RecetaDTO toDTO(Receta e) {
+    public RecetaDTO toDTO(Receta e) {
         if (e == null) return null;
         RecetaDTO d = new RecetaDTO();
         d.setIdReceta(e.getIdReceta());
@@ -22,7 +24,7 @@ public class RecetaMapper {
         return d;
     }
 
-    public static Receta toEntity(RecetaDTO d) {
+    public Receta toEntity(RecetaDTO d) {
         if (d == null) return null;
         Receta e = new Receta();
         e.setIdReceta(d.getIdReceta());

@@ -1,5 +1,6 @@
 package com.vet.spring.app.mapper.citaMapper;
 
+import org.springframework.stereotype.Component;
 import com.vet.spring.app.dto.citaDto.CitaDTO;
 import com.vet.spring.app.entity.cita.Cita;
 import com.vet.spring.app.entity.tenant.Tenant;
@@ -7,9 +8,10 @@ import com.vet.spring.app.entity.mascota.Mascota;
 import com.vet.spring.app.entity.cliente.Cliente;
 import com.vet.spring.app.entity.doctor.Doctor;
 
+@Component
 public class CitaMapper {
 
-    public static CitaDTO toDTO(Cita e) {
+    public CitaDTO toDTO(Cita e) {
         if (e == null) return null;
         CitaDTO d = new CitaDTO();
         d.setIdCita(e.getIdCita());
@@ -25,7 +27,7 @@ public class CitaMapper {
         return d;
     }
 
-    public static Cita toEntity(CitaDTO d) {
+    public Cita toEntity(CitaDTO d) {
         if (d == null) return null;
         Cita e = new Cita();
         e.setIdCita(d.getIdCita());

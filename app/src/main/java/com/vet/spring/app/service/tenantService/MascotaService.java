@@ -38,7 +38,7 @@ public class MascotaService {
             .filter(m -> m.getTenant().getIdTenant().equals(tenantId))
             .collect(Collectors.toList());
         return mascotas.stream()
-            .map(MascotaMapper::toDTO)
+            .map(mascotaMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -53,7 +53,7 @@ public class MascotaService {
             throw new ResourceNotFoundException("Mascota no encontrada en este tenant");
         }
         
-        return MascotaMapper.toDTO(mascota);
+        return mascotaMapper.toDTO(mascota);
     }
 
     /**
@@ -74,7 +74,7 @@ public class MascotaService {
             .collect(Collectors.toList());
         
         return mascotas.stream()
-            .map(MascotaMapper::toDTO)
+            .map(mascotaMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -111,7 +111,7 @@ public class MascotaService {
         mascota.setFechaRegistro(LocalDateTime.now());
 
         Mascota savedMascota = mascotaRepository.save(mascota);
-        return MascotaMapper.toDTO(savedMascota);
+        return mascotaMapper.toDTO(savedMascota);
     }
 
     /**
@@ -142,7 +142,7 @@ public class MascotaService {
         if (dto.getObservaciones() != null) mascota.setObservaciones(dto.getObservaciones());
 
         Mascota updatedMascota = mascotaRepository.save(mascota);
-        return MascotaMapper.toDTO(updatedMascota);
+        return mascotaMapper.toDTO(updatedMascota);
     }
 
     /**
@@ -172,7 +172,7 @@ public class MascotaService {
             .collect(Collectors.toList());
         
         return mascotas.stream()
-            .map(MascotaMapper::toDTO)
+            .map(mascotaMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -188,7 +188,7 @@ public class MascotaService {
             .collect(Collectors.toList());
         
         return mascotas.stream()
-            .map(MascotaMapper::toDTO)
+            .map(mascotaMapper::toDTO)
             .collect(Collectors.toList());
     }
 }

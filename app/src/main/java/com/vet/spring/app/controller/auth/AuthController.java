@@ -40,6 +40,41 @@ public class AuthController {
     }
     
     /**
+     * Login universal - detecta automáticamente si es tenant o super admin
+     */
+    @PostMapping("/login")
+    @Operation(
+        summary = "Login universal",
+        description = "Detecta automáticamente si el usuario es tenant o super admin y lo autentica."
+    )
+    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
+        // Intentar primero como usuario tenant
+        try {
+            UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(request.getUsername());
+            
+            if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+                Integer tenantId = userDetails.getTenantId();
+                String token = jwtUtil.generateTokenWithTenant(userDetails, tenantId);
+                return ResponseEntity.ok(new JwtResponse(token, "Bearer", userDetails.getUsername(), tenantId != null ? tenantId.toString() : null));
+            }
+        } catch (Exception e) {
+            // Si falla, intentar como super admin
+            try {
+                UserDetails superAdminDetails = superAdminUserDetailsService.loadUserByUsername(request.getUsername());
+                
+                if (passwordEncoder.matches(request.getPassword(), superAdminDetails.getPassword())) {
+                    String token = jwtUtil.generateTokenForSuperAdmin(superAdminDetails);
+                    return ResponseEntity.ok(new JwtResponse(token, "Bearer", superAdminDetails.getUsername(), null));
+                }
+            } catch (Exception ex) {
+                // Ignora si no existe como super admin
+            }
+        }
+        
+        throw new BadCredentialsException("Credenciales inválidas");
+    }
+    
+    /**
      * Login para usuarios de tenant (veterinarias)
      */
     @PostMapping("/tenant/login")

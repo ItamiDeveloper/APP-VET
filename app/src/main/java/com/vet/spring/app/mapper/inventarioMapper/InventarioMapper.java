@@ -4,10 +4,12 @@ import com.vet.spring.app.dto.inventarioDto.InventarioDTO;
 import com.vet.spring.app.entity.inventario.Inventario;
 import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.inventario.Producto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class InventarioMapper {
 
-    public static InventarioDTO toDTO(Inventario e) {
+    public InventarioDTO toDTO(Inventario e) {
         if (e == null) return null;
         InventarioDTO d = new InventarioDTO();
         d.setIdInventario(e.getIdInventario());
@@ -19,7 +21,7 @@ public class InventarioMapper {
         return d;
     }
 
-    public static Inventario toEntity(InventarioDTO d) {
+    public Inventario toEntity(InventarioDTO d) {
         if (d == null) return null;
         Inventario e = new Inventario();
         e.setIdInventario(d.getIdInventario());

@@ -5,10 +5,12 @@ import com.vet.spring.app.entity.mascota.Mascota;
 import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.cliente.Cliente;
 import com.vet.spring.app.entity.mascota.Raza;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MascotaMapper {
 
-    public static MascotaDTO toDTO(Mascota e) {
+    public MascotaDTO toDTO(Mascota e) {
         if (e == null) return null;
         MascotaDTO d = new MascotaDTO();
         d.setIdMascota(e.getIdMascota());
@@ -23,7 +25,7 @@ public class MascotaMapper {
         return d;
     }
 
-    public static Mascota toEntity(MascotaDTO d) {
+    public Mascota toEntity(MascotaDTO d) {
         if (d == null) return null;
         Mascota e = new Mascota();
         e.setIdMascota(d.getIdMascota());

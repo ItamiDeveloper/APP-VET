@@ -4,10 +4,12 @@ import com.vet.spring.app.dto.usuarioDto.UsuarioDTO;
 import com.vet.spring.app.entity.usuario.Usuario;
 import com.vet.spring.app.entity.usuario.Rol;
 import com.vet.spring.app.entity.tenant.Tenant;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UsuarioMapper {
 
-    public static UsuarioDTO toDTO(Usuario e) {
+    public UsuarioDTO toDTO(Usuario e) {
         if (e == null) return null;
         UsuarioDTO d = new UsuarioDTO();
         d.setIdUsuario(e.getIdUsuario());
@@ -19,7 +21,7 @@ public class UsuarioMapper {
         return d;
     }
 
-    public static Usuario toEntity(UsuarioDTO d) {
+    public Usuario toEntity(UsuarioDTO d) {
         if (d == null) return null;
         Usuario e = new Usuario();
         e.setIdUsuario(d.getIdUsuario());

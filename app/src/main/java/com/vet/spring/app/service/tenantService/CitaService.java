@@ -41,7 +41,7 @@ public class CitaService {
             .filter(c -> c.getTenant().getIdTenant().equals(tenantId))
             .collect(Collectors.toList());
         return citas.stream()
-            .map(CitaMapper::toDTO)
+            .map(citaMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -56,7 +56,7 @@ public class CitaService {
             throw new ResourceNotFoundException("Cita no encontrada en este tenant");
         }
         
-        return CitaMapper.toDTO(cita);
+        return citaMapper.toDTO(cita);
     }
 
     /**
@@ -76,7 +76,7 @@ public class CitaService {
             .collect(Collectors.toList());
         
         return citas.stream()
-            .map(CitaMapper::toDTO)
+            .map(citaMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -97,7 +97,7 @@ public class CitaService {
             .collect(Collectors.toList());
         
         return citas.stream()
-            .map(CitaMapper::toDTO)
+            .map(citaMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -113,7 +113,7 @@ public class CitaService {
             .collect(Collectors.toList());
         
         return citas.stream()
-            .map(CitaMapper::toDTO)
+            .map(citaMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -170,7 +170,7 @@ public class CitaService {
         cita.setFechaCreacion(LocalDateTime.now());
 
         Cita savedCita = citaRepository.save(cita);
-        return CitaMapper.toDTO(savedCita);
+        return citaMapper.toDTO(savedCita);
     }
 
     /**
@@ -202,7 +202,7 @@ public class CitaService {
         if (dto.getObservaciones() != null) cita.setObservaciones(dto.getObservaciones());
 
         Cita updatedCita = citaRepository.save(cita);
-        return CitaMapper.toDTO(updatedCita);
+        return citaMapper.toDTO(updatedCita);
     }
 
     /**
@@ -224,7 +224,7 @@ public class CitaService {
         }
 
         Cita updatedCita = citaRepository.save(cita);
-        return CitaMapper.toDTO(updatedCita);
+        return citaMapper.toDTO(updatedCita);
     }
 
     /**
@@ -254,7 +254,7 @@ public class CitaService {
             .collect(Collectors.toList());
         
         return citas.stream()
-            .map(CitaMapper::toDTO)
+            .map(citaMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -273,7 +273,7 @@ public class CitaService {
             .collect(Collectors.toList());
         
         return citas.stream()
-            .map(CitaMapper::toDTO)
+            .map(citaMapper::toDTO)
             .collect(Collectors.toList());
     }
 }

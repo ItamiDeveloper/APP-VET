@@ -32,7 +32,7 @@ public class ClienteService {
             .filter(c -> c.getTenant().getIdTenant().equals(tenantId))
             .collect(Collectors.toList());
         return clientes.stream()
-            .map(ClienteMapper::toDTO)
+            .map(clienteMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -47,7 +47,7 @@ public class ClienteService {
             throw new ResourceNotFoundException("Cliente no encontrado en este tenant");
         }
         
-        return ClienteMapper.toDTO(cliente);
+        return clienteMapper.toDTO(cliente);
     }
 
     /**
@@ -84,7 +84,7 @@ public class ClienteService {
         cliente.setFechaRegistro(LocalDateTime.now());
 
         Cliente savedCliente = clienteRepository.save(cliente);
-        return ClienteMapper.toDTO(savedCliente);
+        return clienteMapper.toDTO(savedCliente);
     }
 
     /**
@@ -125,7 +125,7 @@ public class ClienteService {
         if (dto.getDireccion() != null) cliente.setDireccion(dto.getDireccion());
 
         Cliente updatedCliente = clienteRepository.save(cliente);
-        return ClienteMapper.toDTO(updatedCliente);
+        return clienteMapper.toDTO(updatedCliente);
     }
 
     /**
@@ -155,7 +155,7 @@ public class ClienteService {
             .collect(Collectors.toList());
         
         return clientes.stream()
-            .map(ClienteMapper::toDTO)
+            .map(clienteMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -173,7 +173,7 @@ public class ClienteService {
             .collect(Collectors.toList());
         
         return clientes.stream()
-            .map(ClienteMapper::toDTO)
+            .map(clienteMapper::toDTO)
             .collect(Collectors.toList());
     }
 }

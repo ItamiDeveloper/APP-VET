@@ -4,10 +4,12 @@ import com.vet.spring.app.dto.compraDto.CompraDTO;
 import com.vet.spring.app.entity.compra.Compra;
 import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.inventario.Proveedor;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CompraMapper {
 
-    public static CompraDTO toDTO(Compra e) {
+    public CompraDTO toDTO(Compra e) {
         if (e == null) return null;
         CompraDTO d = new CompraDTO();
         d.setIdCompra(e.getIdCompra());
@@ -19,7 +21,7 @@ public class CompraMapper {
         return d;
     }
 
-    public static Compra toEntity(CompraDTO d) {
+    public Compra toEntity(CompraDTO d) {
         if (d == null) return null;
         Compra e = new Compra();
         e.setIdCompra(d.getIdCompra());

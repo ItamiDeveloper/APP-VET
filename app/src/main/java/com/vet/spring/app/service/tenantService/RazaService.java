@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 public class RazaService {
 
     private final RazaRepository razaRepository;
+    private final RazaMapper razaMapper;
 
     /**
      * Obtener todas las razas (catálogo global)
@@ -21,7 +22,7 @@ public class RazaService {
     public List<RazaDTO> getAllRazas() {
         return razaRepository.findAll()
             .stream()
-            .map(RazaMapper::toDTO)
+            .map(razaMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -32,7 +33,7 @@ public class RazaService {
         return razaRepository.findAll()
             .stream()
             .filter(r -> r.getEspecie().getIdEspecie().equals(idEspecie))
-            .map(RazaMapper::toDTO)
+            .map(razaMapper::toDTO)
             .collect(Collectors.toList());
     }
 }

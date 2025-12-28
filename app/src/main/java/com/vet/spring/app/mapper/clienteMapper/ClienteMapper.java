@@ -3,10 +3,12 @@ package com.vet.spring.app.mapper.clienteMapper;
 import com.vet.spring.app.dto.clienteDto.ClienteDTO;
 import com.vet.spring.app.entity.cliente.Cliente;
 import com.vet.spring.app.entity.tenant.Tenant;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ClienteMapper {
 
-    public static ClienteDTO toDTO(Cliente e) {
+    public ClienteDTO toDTO(Cliente e) {
         if (e == null) return null;
         ClienteDTO d = new ClienteDTO();
         d.setIdCliente(e.getIdCliente());
@@ -22,7 +24,7 @@ public class ClienteMapper {
         return d;
     }
 
-    public static Cliente toEntity(ClienteDTO d) {
+    public Cliente toEntity(ClienteDTO d) {
         if (d == null) return null;
         Cliente e = new Cliente();
         e.setIdCliente(d.getIdCliente());

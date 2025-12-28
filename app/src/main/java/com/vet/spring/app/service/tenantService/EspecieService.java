@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 public class EspecieService {
 
     private final EspecieRepository especieRepository;
+    private final EspecieMapper especieMapper;
 
     /**
      * Obtener todas las especies (catálogo global)
@@ -21,7 +22,7 @@ public class EspecieService {
     public List<EspecieDTO> getAllEspecies() {
         return especieRepository.findAll()
             .stream()
-            .map(EspecieMapper::toDTO)
+            .map(especieMapper::toDTO)
             .collect(Collectors.toList());
     }
 }

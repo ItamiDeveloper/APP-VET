@@ -4,10 +4,12 @@ import com.vet.spring.app.dto.ventaDto.VentaDTO;
 import com.vet.spring.app.entity.venta.Venta;
 import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.cliente.Cliente;
+import org.springframework.stereotype.Component;
 
+@Component
 public class VentaMapper {
 
-    public static VentaDTO toDTO(Venta e) {
+    public VentaDTO toDTO(Venta e) {
         if (e == null) return null;
         VentaDTO d = new VentaDTO();
         d.setIdVenta(e.getIdVenta());
@@ -20,7 +22,7 @@ public class VentaMapper {
         return d;
     }
 
-    public static Venta toEntity(VentaDTO d) {
+    public Venta toEntity(VentaDTO d) {
         if (d == null) return null;
         Venta e = new Venta();
         e.setIdVenta(d.getIdVenta());

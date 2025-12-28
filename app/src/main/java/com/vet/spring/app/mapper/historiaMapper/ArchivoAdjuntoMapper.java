@@ -5,10 +5,12 @@ import com.vet.spring.app.entity.historia.ArchivoAdjunto;
 import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.entity.historia.HistoriaClinica;
 import com.vet.spring.app.entity.mascota.Mascota;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ArchivoAdjuntoMapper {
 
-    public static ArchivoAdjuntoDTO toDTO(ArchivoAdjunto e) {
+    public ArchivoAdjuntoDTO toDTO(ArchivoAdjunto e) {
         if (e == null) return null;
         ArchivoAdjuntoDTO d = new ArchivoAdjuntoDTO();
         d.setIdArchivo(e.getIdArchivo());
@@ -22,7 +24,7 @@ public class ArchivoAdjuntoMapper {
         return d;
     }
 
-    public static ArchivoAdjunto toEntity(ArchivoAdjuntoDTO d) {
+    public ArchivoAdjunto toEntity(ArchivoAdjuntoDTO d) {
         if (d == null) return null;
         ArchivoAdjunto e = new ArchivoAdjunto();
         e.setIdArchivo(d.getIdArchivo());

@@ -37,7 +37,7 @@ public class UsuarioService {
             .filter(u -> u.getTenant().getIdTenant().equals(tenantId))
             .collect(Collectors.toList());
         return usuarios.stream()
-            .map(UsuarioMapper::toDTO)
+            .map(usuarioMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -53,7 +53,7 @@ public class UsuarioService {
             throw new ResourceNotFoundException("Usuario no encontrado en este tenant");
         }
         
-        return UsuarioMapper.toDTO(usuario);
+        return usuarioMapper.toDTO(usuario);
     }
 
     /**
@@ -104,7 +104,7 @@ public class UsuarioService {
         usuario.setUltimoAcceso(null);
 
         Usuario savedUsuario = usuarioRepository.save(usuario);
-        return UsuarioMapper.toDTO(savedUsuario);
+        return usuarioMapper.toDTO(savedUsuario);
     }
 
     /**
@@ -152,7 +152,7 @@ public class UsuarioService {
         }
 
         Usuario updatedUsuario = usuarioRepository.save(usuario);
-        return UsuarioMapper.toDTO(updatedUsuario);
+        return usuarioMapper.toDTO(updatedUsuario);
     }
 
     /**
@@ -193,7 +193,7 @@ public class UsuarioService {
         }
 
         Usuario updatedUsuario = usuarioRepository.save(usuario);
-        return UsuarioMapper.toDTO(updatedUsuario);
+        return usuarioMapper.toDTO(updatedUsuario);
     }
 
     /**
@@ -207,7 +207,7 @@ public class UsuarioService {
             .collect(Collectors.toList());
         
         return usuarios.stream()
-            .map(UsuarioMapper::toDTO)
+            .map(usuarioMapper::toDTO)
             .collect(Collectors.toList());
     }
 
@@ -222,7 +222,7 @@ public class UsuarioService {
             .collect(Collectors.toList());
         
         return usuarios.stream()
-            .map(UsuarioMapper::toDTO)
+            .map(usuarioMapper::toDTO)
             .collect(Collectors.toList());
     }
 }

@@ -4,10 +4,12 @@ import com.vet.spring.app.dto.historiaDto.DetalleRecetaDTO;
 import com.vet.spring.app.entity.historia.DetalleReceta;
 import com.vet.spring.app.entity.historia.Receta;
 import com.vet.spring.app.entity.inventario.Producto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DetalleRecetaMapper {
 
-    public static DetalleRecetaDTO toDTO(DetalleReceta e) {
+    public DetalleRecetaDTO toDTO(DetalleReceta e) {
         if (e == null) return null;
         DetalleRecetaDTO d = new DetalleRecetaDTO();
         d.setIdDetalleReceta(e.getIdDetalleReceta());
@@ -19,7 +21,7 @@ public class DetalleRecetaMapper {
         return d;
     }
 
-    public static DetalleReceta toEntity(DetalleRecetaDTO d) {
+    public DetalleReceta toEntity(DetalleRecetaDTO d) {
         if (d == null) return null;
         DetalleReceta e = new DetalleReceta();
         e.setIdDetalleReceta(d.getIdDetalleReceta());
