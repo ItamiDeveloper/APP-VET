@@ -1,11 +1,8 @@
 package com.vet.spring.app.service.tenantService;
 
 import com.vet.spring.app.dto.inventarioDto.InventarioDTO;
-import com.vet.spring.app.dto.inventarioDto.ProductoDTO;
 import com.vet.spring.app.entity.inventario.Inventario;
-import com.vet.spring.app.entity.inventario.Producto;
 import com.vet.spring.app.repository.inventarioRepository.InventarioRepository;
-import com.vet.spring.app.repository.inventarioRepository.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +15,6 @@ import java.util.stream.Collectors;
 public class InventarioService {
 
     private final InventarioRepository inventarioRepository;
-    private final ProductoRepository productoRepository;
 
     @Transactional(readOnly = true)
     public List<InventarioDTO> getAllInventarioByTenant(Integer tenantId) {
@@ -38,14 +34,6 @@ public class InventarioService {
         }
         
         return toDTO(inventario);
-    }
-
-    @Transactional(readOnly = true)
-    public List<ProductoDTO> getAllProductosByTenant(Integer tenantId) {
-        // Productos son globales, no tienen tenant
-        return productoRepository.findAll().stream()
-                .map(this::toProductoDTO)
-                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -87,25 +75,68 @@ public class InventarioService {
         
         inventarioRepository.deleteById(id);
     }
+    
+    /**
+     * Incrementar stock de un inventario
+     */
+    @Transactional
+    public InventarioDTO incrementarStock(Integer id, Integer cantidad, Integer tenantId) {
+        Inventario inventario = inventarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Inventario no encontrado"));
+        
+        if (!inventario.getTenant().getIdTenant().equals(tenantId)) {
+            throw new RuntimeException("Acceso denegado");
+        }
+        
+        if (cantidad <= 0) {
+            throw new RuntimeException("La cantidad debe ser mayor a 0");
+        }
+        
+        inventario.setStockActual(inventario.getStockActual() + cantidad);
+        inventario.setFechaUltimoIngreso(java.time.LocalDateTime.now());
+        
+        Inventario updated = inventarioRepository.save(inventario);
+        return toDTO(updated);
+    }
+    
+    /**
+     * Decrementar stock de un inventario
+     */
+    @Transactional
+    public InventarioDTO decrementarStock(Integer id, Integer cantidad, Integer tenantId) {
+        Inventario inventario = inventarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Inventario no encontrado"));
+        
+        if (!inventario.getTenant().getIdTenant().equals(tenantId)) {
+            throw new RuntimeException("Acceso denegado");
+        }
+        
+        if (cantidad <= 0) {
+            throw new RuntimeException("La cantidad debe ser mayor a 0");
+        }
+        
+        if (inventario.getStockActual() < cantidad) {
+            throw new RuntimeException("Stock insuficiente. Stock actual: " + inventario.getStockActual());
+        }
+        
+        inventario.setStockActual(inventario.getStockActual() - cantidad);
+        inventario.setFechaUltimaSalida(java.time.LocalDateTime.now());
+        
+        Inventario updated = inventarioRepository.save(inventario);
+        return toDTO(updated);
+    }
 
     private InventarioDTO toDTO(Inventario entity) {
         InventarioDTO dto = new InventarioDTO();
         dto.setIdInventario(entity.getIdInventario());
         dto.setIdTenant(entity.getTenant().getIdTenant());
         dto.setIdProducto(entity.getProducto().getIdProducto());
+        dto.setNombreProducto(entity.getProducto().getNombre());
+        dto.setDescripcionProducto(entity.getProducto().getDescripcion());
+        dto.setPrecioUnitario(entity.getProducto().getPrecioUnitario());
         dto.setStockActual(entity.getStockActual());
         dto.setStockMinimo(entity.getStockMinimo());
         dto.setStockMaximo(entity.getStockMaximo());
-        return dto;
-    }
-
-    private ProductoDTO toProductoDTO(Producto entity) {
-        ProductoDTO dto = new ProductoDTO();
-        dto.setIdProducto(entity.getIdProducto());
-        dto.setNombre(entity.getNombre());
-        dto.setDescripcion(entity.getDescripcion());
-        dto.setPrecioUnitario(entity.getPrecioUnitario());
-        dto.setEstado(entity.getEstado() != null ? entity.getEstado().name() : "ACTIVO");
         return dto;
     }
 }

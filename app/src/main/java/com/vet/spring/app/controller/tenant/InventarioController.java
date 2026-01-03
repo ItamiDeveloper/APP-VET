@@ -35,13 +35,6 @@ public class InventarioController {
         return ResponseEntity.ok(inventarioService.getInventarioById(id, tenantId));
     }
 
-    @GetMapping("/productos")
-    @Operation(summary = "Listar todos los productos")
-    public ResponseEntity<List<ProductoDTO>> getAllProductos() {
-        Integer tenantId = TenantContext.getTenantId();
-        return ResponseEntity.ok(inventarioService.getAllProductosByTenant(tenantId));
-    }
-
     @PostMapping
     @Operation(summary = "Crear un nuevo inventario")
     public ResponseEntity<InventarioDTO> createInventario(@RequestBody InventarioDTO dto) {
@@ -63,5 +56,23 @@ public class InventarioController {
         Integer tenantId = TenantContext.getTenantId();
         inventarioService.deleteInventario(id, tenantId);
         return ResponseEntity.noContent().build();
+    }
+    
+    @PatchMapping("/{id}/incrementar")
+    @Operation(summary = "Incrementar stock de inventario")
+    public ResponseEntity<InventarioDTO> incrementarStock(
+            @PathVariable Integer id, 
+            @RequestParam Integer cantidad) {
+        Integer tenantId = TenantContext.getTenantId();
+        return ResponseEntity.ok(inventarioService.incrementarStock(id, cantidad, tenantId));
+    }
+    
+    @PatchMapping("/{id}/decrementar")
+    @Operation(summary = "Decrementar stock de inventario")
+    public ResponseEntity<InventarioDTO> decrementarStock(
+            @PathVariable Integer id, 
+            @RequestParam Integer cantidad) {
+        Integer tenantId = TenantContext.getTenantId();
+        return ResponseEntity.ok(inventarioService.decrementarStock(id, cantidad, tenantId));
     }
 }

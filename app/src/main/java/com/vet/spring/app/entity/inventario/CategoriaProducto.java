@@ -1,6 +1,5 @@
 package com.vet.spring.app.entity.inventario;
 
-import com.vet.spring.app.entity.common.Estado;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,5 +23,9 @@ public class CategoriaProducto {
     private String descripcion;
 
     @Enumerated(EnumType.STRING)
-    private Estado estado;
+    private EstadoCategoria estado;
+    
+    public enum EstadoCategoria {
+        ACTIVO, INACTIVO
+    }
 }

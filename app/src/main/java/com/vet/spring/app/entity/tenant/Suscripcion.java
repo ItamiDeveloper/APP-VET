@@ -31,30 +31,27 @@ public class Suscripcion {
     @Column(name = "fecha_fin", nullable = false)
     private LocalDate fechaFin;
 
-    @Column(name = "metodo_pago", length = 50)
-    private String metodoPago;
+    @Column(name = "tipo_pago", length = 20)
+    private String tipoPago;
 
     @Column(name = "monto_pagado", precision = 10, scale = 2)
     private BigDecimal montoPagado;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EstadoSuscripcion estado = EstadoSuscripcion.PENDIENTE;
-
-    @Column(columnDefinition = "TEXT")
-    private String notas;
+    private EstadoSuscripcion estado = EstadoSuscripcion.ACTIVA;
 
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     public enum EstadoSuscripcion {
-        PENDIENTE, ACTIVO, VENCIDO, CANCELADO
+        ACTIVA, VENCIDA, CANCELADA
     }
 
-    // Métodos helper
+    // Métodos helper (sin notas, no existe en BD)
     public boolean estaActiva() {
         LocalDate hoy = LocalDate.now();
-        return estado == EstadoSuscripcion.ACTIVO && 
+        return estado == EstadoSuscripcion.ACTIVA && 
                !hoy.isBefore(fechaInicio) && 
                !hoy.isAfter(fechaFin);
     }

@@ -15,7 +15,7 @@ public interface SuscripcionRepository extends JpaRepository<Suscripcion, Intege
     
     List<Suscripcion> findByTenantOrderByFechaCreacionDesc(Tenant tenant);
     
-    @Query("SELECT s FROM Suscripcion s WHERE s.tenant = :tenant AND s.estado = 'ACTIVO' ORDER BY s.fechaFin DESC")
+    @Query("SELECT s FROM Suscripcion s WHERE s.tenant = :tenant AND s.estado = 'ACTIVA' ORDER BY s.fechaFin DESC")
     Optional<Suscripcion> findActiveSuscripcionByTenant(Tenant tenant);
     
     @Query("SELECT s FROM Suscripcion s WHERE s.estado = :estado AND s.fechaFin BETWEEN :fechaInicio AND :fechaFin")

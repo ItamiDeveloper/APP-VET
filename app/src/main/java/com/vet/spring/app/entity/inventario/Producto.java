@@ -1,7 +1,6 @@
 package com.vet.spring.app.entity.inventario;
 
 import java.math.BigDecimal;
-import com.vet.spring.app.entity.common.Estado;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,5 +31,9 @@ public class Producto {
     private Boolean esMedicamento;
     private BigDecimal precioUnitario;
     @Enumerated(EnumType.STRING)
-    private Estado estado;
+    private EstadoProducto estado;
+    
+    public enum EstadoProducto {
+        ACTIVO, INACTIVO
+    }
 }

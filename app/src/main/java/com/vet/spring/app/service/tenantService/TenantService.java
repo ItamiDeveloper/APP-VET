@@ -13,6 +13,8 @@ import com.vet.spring.app.repository.tenantRepository.SuscripcionRepository;
 import com.vet.spring.app.repository.tenantRepository.TenantRepository;
 import com.vet.spring.app.repository.usuarioRepository.RolRepository;
 import com.vet.spring.app.repository.usuarioRepository.UsuarioRepository;
+import com.vet.spring.app.repository.mascotaRepository.MascotaRepository;
+import com.vet.spring.app.repository.doctorRepository.DoctorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,8 @@ public class TenantService {
     private final SuscripcionRepository suscripcionRepository;
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final MascotaRepository mascotaRepository;
+    private final DoctorRepository doctorRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -77,8 +81,7 @@ public class TenantService {
         suscripcion.setPlan(plan);
         suscripcion.setFechaInicio(LocalDate.now());
         suscripcion.setFechaFin(LocalDate.now().plusDays(savedTenant.getDiasTrial()));
-        suscripcion.setEstado(Suscripcion.EstadoSuscripcion.ACTIVO);
-        suscripcion.setNotas("Suscripción de prueba gratuita");
+        suscripcion.setEstado(Suscripcion.EstadoSuscripcion.ACTIVA);
         suscripcionRepository.save(suscripcion);
 
         // Crear usuario administrador del tenant
@@ -291,17 +294,21 @@ public class TenantService {
         dto.setMaxMascotas(plan.getMaxMascotas());
         dto.setMaxAlmacenamientoMb(plan.getMaxAlmacenamientoMb());
         
-        // Uso actual
-        dto.setUsuariosActivos(tenant.getUsuariosActivos());
-        dto.setDoctoresActivos(tenant.getDoctoresActivos());
-        dto.setMascotasRegistradas(tenant.getMascotasRegistradas());
-        dto.setAlmacenamientoUsadoMb(tenant.getAlmacenamientoUsadoMb());
+        // Uso actual - Contar desde las tablas directamente
+        long usuariosActivos = usuarioRepository.countByIdTenant(tenant.getIdTenant());
+        long doctoresActivos = doctorRepository.countByIdTenant(tenant.getIdTenant());
+        long mascotasRegistradas = mascotaRepository.countByIdTenant(tenant.getIdTenant());
+        
+        dto.setUsuariosActivos((int) usuariosActivos);
+        dto.setDoctoresActivos((int) doctoresActivos);
+        dto.setMascotasRegistradas((int) mascotasRegistradas);
+        dto.setAlmacenamientoUsadoMb(tenant.getAlmacenamientoUsadoMb() != null ? tenant.getAlmacenamientoUsadoMb() : 0);
         
         // Calcular porcentajes de uso
-        dto.setPorcentajeUsuarios((tenant.getUsuariosActivos() * 100.0) / plan.getMaxUsuarios());
-        dto.setPorcentajeDoctores((tenant.getDoctoresActivos() * 100.0) / plan.getMaxDoctores());
-        dto.setPorcentajeMascotas((tenant.getMascotasRegistradas() * 100.0) / plan.getMaxMascotas());
-        dto.setPorcentajeAlmacenamiento((tenant.getAlmacenamientoUsadoMb() * 100.0) / plan.getMaxAlmacenamientoMb());
+        dto.setPorcentajeUsuarios((usuariosActivos * 100.0) / plan.getMaxUsuarios());
+        dto.setPorcentajeDoctores((doctoresActivos * 100.0) / plan.getMaxDoctores());
+        dto.setPorcentajeMascotas((mascotasRegistradas * 100.0) / plan.getMaxMascotas());
+        dto.setPorcentajeAlmacenamiento((dto.getAlmacenamientoUsadoMb() * 100.0) / plan.getMaxAlmacenamientoMb());
         
         // Features del plan
         dto.setTieneReportesAvanzados(plan.getTieneReportesAvanzados());
@@ -334,28 +341,41 @@ public class TenantService {
         dto.setPais(tenant.getPais());
         dto.setCiudad(tenant.getCiudad());
         
-        dto.setIdPlanActual(tenant.getPlanActual().getIdPlan());
-        dto.setNombrePlan(tenant.getPlanActual().getNombre());
-        dto.setEstadoSuscripcion(tenant.getEstadoSuscripcion().name());
+        // Validar que el plan actual no sea null
+        Plan plan = tenant.getPlanActual();
+        if (plan != null) {
+            dto.setIdPlanActual(plan.getIdPlan());
+            dto.setNombrePlan(plan.getNombre());
+            dto.setMaxUsuarios(plan.getMaxUsuarios());
+            dto.setMaxDoctores(plan.getMaxDoctores());
+            dto.setMaxMascotas(plan.getMaxMascotas());
+            dto.setMaxAlmacenamientoMb(plan.getMaxAlmacenamientoMb());
+        } else {
+            // Valores por defecto si no hay plan asignado
+            dto.setIdPlanActual(null);
+            dto.setNombrePlan("Sin Plan");
+            dto.setMaxUsuarios(0);
+            dto.setMaxDoctores(0);
+            dto.setMaxMascotas(0);
+            dto.setMaxAlmacenamientoMb(0);
+        }
+        
+        dto.setEstadoSuscripcion(tenant.getEstadoSuscripcion() != null ? tenant.getEstadoSuscripcion().name() : "INACTIVO");
         
         dto.setNombrePropietario(tenant.getNombrePropietario());
         dto.setEmailPropietario(tenant.getEmailPropietario());
         dto.setTelefonoPropietario(tenant.getTelefonoPropietario());
         
-        dto.setUsuariosActivos(tenant.getUsuariosActivos());
-        dto.setDoctoresActivos(tenant.getDoctoresActivos());
-        dto.setMascotasRegistradas(tenant.getMascotasRegistradas());
-        dto.setAlmacenamientoUsadoMb(tenant.getAlmacenamientoUsadoMb());
-        
-        dto.setMaxUsuarios(tenant.getPlanActual().getMaxUsuarios());
-        dto.setMaxDoctores(tenant.getPlanActual().getMaxDoctores());
-        dto.setMaxMascotas(tenant.getPlanActual().getMaxMascotas());
-        dto.setMaxAlmacenamientoMb(tenant.getPlanActual().getMaxAlmacenamientoMb());
+        // Contar desde las tablas directamente
+        dto.setUsuariosActivos((int) usuarioRepository.countByIdTenant(tenant.getIdTenant()));
+        dto.setDoctoresActivos((int) doctorRepository.countByIdTenant(tenant.getIdTenant()));
+        dto.setMascotasRegistradas((int) mascotaRepository.countByIdTenant(tenant.getIdTenant()));
+        dto.setAlmacenamientoUsadoMb(tenant.getAlmacenamientoUsadoMb() != null ? tenant.getAlmacenamientoUsadoMb() : 0);
         
         dto.setLogoUrl(tenant.getLogoUrl());
         dto.setColorPrimario(tenant.getColorPrimario());
         dto.setColorSecundario(tenant.getColorSecundario());
-        dto.setEstado(tenant.getEstado().name());
+        dto.setEstado(tenant.getEstado() != null ? tenant.getEstado().name() : "INACTIVO");
         
         return dto;
     }
