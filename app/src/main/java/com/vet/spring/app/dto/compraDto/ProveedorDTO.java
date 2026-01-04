@@ -1,4 +1,4 @@
-package com.vet.spring.app.dto.inventarioDto;
+package com.vet.spring.app.dto.compraDto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,5 +11,6 @@ public class ProveedorDTO {
     private String telefono;
     private String email;
     private String direccion;
+    private String contacto;
     private String estado;
 }

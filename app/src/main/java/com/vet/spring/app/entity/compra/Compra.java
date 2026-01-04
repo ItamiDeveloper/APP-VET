@@ -3,7 +3,7 @@ package com.vet.spring.app.entity.compra;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.vet.spring.app.entity.inventario.Proveedor;
+import com.vet.spring.app.entity.common.Proveedor;
 import com.vet.spring.app.entity.tenant.Tenant;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

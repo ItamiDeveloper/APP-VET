@@ -3,7 +3,7 @@ package com.vet.spring.app.mapper.compraMapper;
 import com.vet.spring.app.dto.compraDto.CompraDTO;
 import com.vet.spring.app.entity.compra.Compra;
 import com.vet.spring.app.entity.tenant.Tenant;
-import com.vet.spring.app.entity.inventario.Proveedor;
+import com.vet.spring.app.entity.common.Proveedor;
 import org.springframework.stereotype.Component;
 
 @Component

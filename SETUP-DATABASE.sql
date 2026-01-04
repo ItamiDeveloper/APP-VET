@@ -190,14 +190,15 @@ CREATE TABLE producto (
 
 CREATE TABLE proveedor (
   id_proveedor INT AUTO_INCREMENT PRIMARY KEY,
-  ruc VARCHAR(20),
   nombre VARCHAR(200) NOT NULL,
-  direccion TEXT,
-  telefono VARCHAR(20),
+  ruc VARCHAR(20),
+  telefono VARCHAR(50),
   email VARCHAR(100),
-  estado ENUM('ACTIVO','INACTIVO') NOT NULL DEFAULT 'ACTIVO',
-  INDEX idx_ruc (ruc),
-  INDEX idx_nombre (nombre)
+  direccion TEXT,
+  contacto VARCHAR(100),
+  estado VARCHAR(20) DEFAULT 'ACTIVO',
+  INDEX idx_proveedor_estado (estado),
+  INDEX idx_proveedor_nombre (nombre)
 ) ENGINE=InnoDB;
 
 -- ===========================================
@@ -493,10 +494,12 @@ INSERT INTO producto (id_categoria, nombre, descripcion, es_medicamento, precio_
 (5, 'Vacuna Antirrábica', 'Vacuna antirrábica', TRUE, 30.00, 'ACTIVO');
 
 -- PROVEEDORES
-INSERT INTO proveedor (ruc, nombre, direccion, telefono, email, estado) VALUES
-('20123456789', 'Distribuidora Veterinaria Lima', 'Av. Venezuela 1234, Lima', '014567890', 'ventas@divetlima.com', 'ACTIVO'),
-('20987654321', 'Farmacia Veterinaria Global', 'Jr. Cusco 567, Lima', '013456789', 'contacto@fvglobal.com', 'ACTIVO'),
-('20456789123', 'Pet Supply SAC', 'Av. Arequipa 890, Lima', '012345678', 'info@petsupply.com', 'ACTIVO');
+INSERT INTO proveedor (nombre, ruc, telefono, email, direccion, contacto, estado) VALUES
+('Laboratorios Bayer', '20123456789', '01-234-5678', 'ventas@bayer.com', 'Av. Venezuela 1234, Lima', 'Juan Pérez', 'ACTIVO'),
+('MSD Animal Health', '20987654321', '01-876-5432', 'info@msd.com', 'Jr. Cusco 567, Lima', 'María García', 'ACTIVO'),
+('Zoetis Perú', '20456789123', '01-456-7890', 'contacto@zoetis.pe', 'Av. Arequipa 890, Lima', 'Carlos Rodríguez', 'ACTIVO'),
+('Alimentos Pet Supply', '20789123456', '01-789-1234', 'ventas@petsupply.com', 'Calle Las Flores 456, Lima', 'Ana Torres', 'ACTIVO'),
+('Distribuidora Veterinaria S.A.', '20321654987', '01-321-6549', 'info@distveterinaria.com', 'Jr. Los Olivos 123, Lima', 'Luis Martínez', 'ACTIVO');
 
 -- TENANTS (VETERINARIAS)
 INSERT INTO tenant (codigo_tenant, nombre_comercial, razon_social, ruc, email_contacto, telefono, direccion, ciudad, id_plan_actual, estado_suscripcion, fecha_registro, fecha_activacion, dias_trial, nombre_propietario, email_propietario, telefono_propietario, estado) VALUES

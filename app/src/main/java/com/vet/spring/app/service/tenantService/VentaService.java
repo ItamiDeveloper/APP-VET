@@ -39,9 +39,21 @@ public class VentaService {
     @Transactional
     public VentaDTO createVenta(VentaDTO dto, Integer tenantId) {
         Venta venta = new Venta();
+        
+        // Set Tenant
+        com.vet.spring.app.entity.tenant.Tenant tenant = new com.vet.spring.app.entity.tenant.Tenant();
+        tenant.setIdTenant(tenantId);
+        venta.setTenant(tenant);
+        
+        // Set Cliente
+        com.vet.spring.app.entity.cliente.Cliente cliente = new com.vet.spring.app.entity.cliente.Cliente();
+        cliente.setIdCliente(dto.getIdCliente());
+        venta.setCliente(cliente);
+        
         venta.setFecha(dto.getFecha());
         venta.setTotal(dto.getTotal());
         venta.setMetodoPago(dto.getMetodoPago());
+        venta.setEstado(dto.getEstado() != null ? dto.getEstado() : "COMPLETADA");
         
         Venta saved = ventaRepository.save(venta);
         return toDTO(saved);
@@ -56,9 +68,19 @@ public class VentaService {
             throw new RuntimeException("Acceso denegado");
         }
         
+        // Update Cliente if provided
+        if (dto.getIdCliente() != null) {
+            com.vet.spring.app.entity.cliente.Cliente cliente = new com.vet.spring.app.entity.cliente.Cliente();
+            cliente.setIdCliente(dto.getIdCliente());
+            venta.setCliente(cliente);
+        }
+        
         venta.setFecha(dto.getFecha());
         venta.setTotal(dto.getTotal());
         venta.setMetodoPago(dto.getMetodoPago());
+        if (dto.getEstado() != null) {
+            venta.setEstado(dto.getEstado());
+        }
         
         Venta updated = ventaRepository.save(venta);
         return toDTO(updated);
