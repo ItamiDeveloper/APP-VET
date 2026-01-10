@@ -49,6 +49,42 @@ public class TenantController {
     }
 
     @Operation(
+            summary = "Listar solicitudes pendientes",
+            description = "Retorna las solicitudes de registro pendientes de aprobación. Solo para super administradores.",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    @GetMapping("/super-admin/tenants/solicitudes/pendientes")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<List<TenantDTO>> getSolicitudesPendientes() {
+        return ResponseEntity.ok(tenantService.getSolicitudesPendientes());
+    }
+
+    @Operation(
+            summary = "Aprobar solicitud de registro",
+            description = "Aprueba una solicitud de registro y crea el tenant con su usuario administrador. Solo para super administradores.",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    @PostMapping("/super-admin/tenants/{id}/aprobar")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<TenantDTO> aprobarSolicitud(
+            @PathVariable Integer id, 
+            @RequestBody TenantRegistroDTO datosUsuario) {
+        return ResponseEntity.ok(tenantService.aprobarSolicitud(id, datosUsuario));
+    }
+
+    @Operation(
+            summary = "Rechazar solicitud de registro",
+            description = "Rechaza una solicitud de registro de veterinaria. Solo para super administradores.",
+            security = @SecurityRequirement(name = "Bearer Authentication")
+    )
+    @PostMapping("/super-admin/tenants/{id}/rechazar")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<Void> rechazarSolicitud(@PathVariable Integer id) {
+        tenantService.rechazarSolicitud(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
             summary = "Listar todas las veterinarias",
             description = "Retorna todas las veterinarias registradas en el sistema. Solo para super administradores.",
             security = @SecurityRequirement(name = "Bearer Authentication")

@@ -298,6 +298,22 @@ Verificar:
 
 ---
 
+## ✅ CORRECCIONES APLICADAS (10/01/2026)
+
+### Multi-Tenant Hardcoding ELIMINADO
+- ✅ **mascotas/page.tsx** - Removido `idVeterinaria: 1`
+- ✅ **historias/page.tsx** - Removido `idVeterinaria: 1`
+- ✅ **citas/page.tsx** - Removido `idVeterinaria: 1`
+- ✅ **calendario/page.tsx** - Removido `idVeterinaria: 1`
+- ✅ **usuarios/page.tsx** - Removido `idTenant: 1` del formulario
+- ✅ **registro/page.tsx** - Corregido código duplicado
+
+**Resultado:** El sistema ahora asigna correctamente el tenantId desde el JWT. Cada veterinaria solo ve y gestiona sus propios datos.
+
+Ver documento completo: [CORRECCIONES-MULTI-TENANT-FINAL.md](CORRECCIONES-MULTI-TENANT-FINAL.md)
+
+---
+
 ## 🐛 POSIBLES PROBLEMAS Y SOLUCIONES
 
 ### Problema 1: Backend no inicia

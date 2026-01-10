@@ -108,7 +108,11 @@ public class Tenant {
     }
 
     public enum EstadoTenant {
-        ACTIVO, INACTIVO
+        PENDIENTE,   // Solicitud de registro pendiente de aprobación
+        ACTIVO,      // Veterinaria activa y funcionando
+        INACTIVO,    // Veterinaria desactivada temporalmente
+        SUSPENDIDO,  // Suspendido por falta de pago
+        RECHAZADO    // Solicitud rechazada por el SuperAdmin
     }
 
     // Métodos helper para validar límites

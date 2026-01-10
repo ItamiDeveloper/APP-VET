@@ -9,6 +9,7 @@ public class DetalleVentaDTO {
     private Integer idDetalleVenta;
     private Integer idVenta;
     private Integer idProducto;
+    private String productoNombre; // Nombre del producto
     private Integer cantidad;
     private BigDecimal precioUnitario;
     private BigDecimal subtotal;

@@ -1,10 +1,12 @@
 package com.vet.spring.app.dto.auth;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
 public class JwtResponse {
+    @JsonProperty("accessToken")
     private String token;
     private String refreshToken;
     private String type = "Bearer";

@@ -54,7 +54,7 @@ public class TenantService {
         Plan plan = planRepository.findById(dto.getIdPlan())
                 .orElseThrow(() -> new RuntimeException("Plan no encontrado"));
 
-        // Crear el tenant
+        // Crear el tenant con estado PENDIENTE (esperando aprobación del SuperAdmin)
         Tenant tenant = new Tenant();
         tenant.setCodigoTenant(dto.getCodigoTenant());
         tenant.setNombreComercial(dto.getNombreComercial());
@@ -70,38 +70,16 @@ public class TenantService {
         tenant.setNombrePropietario(dto.getNombrePropietario() + " " + dto.getApellidoPropietario());
         tenant.setEmailPropietario(dto.getEmailPropietario());
         tenant.setTelefonoPropietario(dto.getTelefonoPropietario());
-        tenant.setEstado(Tenant.EstadoTenant.ACTIVO);
-        tenant.setFechaActivacion(LocalDateTime.now());
+        
+        // ESTADO PENDIENTE - Requiere aprobación del SuperAdmin
+        tenant.setEstado(Tenant.EstadoTenant.PENDIENTE);
+        tenant.setFechaRegistro(LocalDateTime.now());
 
         Tenant savedTenant = tenantRepository.save(tenant);
 
-        // Crear suscripción de trial
-        Suscripcion suscripcion = new Suscripcion();
-        suscripcion.setTenant(savedTenant);
-        suscripcion.setPlan(plan);
-        suscripcion.setFechaInicio(LocalDate.now());
-        suscripcion.setFechaFin(LocalDate.now().plusDays(savedTenant.getDiasTrial()));
-        suscripcion.setEstado(Suscripcion.EstadoSuscripcion.ACTIVA);
-        suscripcionRepository.save(suscripcion);
-
-        // Crear usuario administrador del tenant
-        Rol rolAdmin = rolRepository.findByNombre("ROLE_ADMIN")
-                .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
-
-        Usuario adminUser = new Usuario();
-        adminUser.setTenant(savedTenant);
-        adminUser.setRol(rolAdmin);
-        adminUser.setUsername(dto.getUsernamePropietario());
-        adminUser.setPasswordHash(passwordEncoder.encode(dto.getPasswordPropietario()));
-        adminUser.setEmail(dto.getEmailPropietario());
-        adminUser.setNombres(dto.getNombrePropietario());
-        adminUser.setApellidos(dto.getApellidoPropietario());
-        adminUser.setTelefono(dto.getTelefonoPropietario());
-        adminUser.setEstado(Usuario.EstadoUsuario.ACTIVO);
-        usuarioRepository.save(adminUser);
-
-        // Incrementar contador de usuarios activos
-        savedTenant.setUsuariosActivos(1);
+        // Guardar datos del usuario administrador propuesto (se creará después de aprobación)
+        // Por ahora solo guardamos la información en el tenant
+        savedTenant.setUsuariosActivos(0); // No hay usuarios hasta que se apruebe
         tenantRepository.save(savedTenant);
 
         return toDTO(savedTenant);
@@ -217,6 +195,82 @@ public class TenantService {
                 .orElseThrow(() -> new RuntimeException("Tenant no encontrado"));
         tenant.setUsuariosActivos(tenant.getUsuariosActivos() + 1);
         tenantRepository.save(tenant);
+    }
+
+    /**
+     * APROBAR SOLICITUD DE REGISTRO (Solo SuperAdmin)
+     * Crea la suscripción y el usuario administrador
+     */
+    @Transactional
+    public TenantDTO aprobarSolicitud(Integer tenantId, TenantRegistroDTO datosUsuario) {
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Tenant no encontrado"));
+
+        if (tenant.getEstado() != Tenant.EstadoTenant.PENDIENTE) {
+            throw new RuntimeException("El tenant ya fue procesado");
+        }
+
+        // Activar el tenant
+        tenant.setEstado(Tenant.EstadoTenant.ACTIVO);
+        tenant.setFechaActivacion(LocalDateTime.now());
+        tenantRepository.save(tenant);
+
+        // Crear suscripción de trial
+        Suscripcion suscripcion = new Suscripcion();
+        suscripcion.setTenant(tenant);
+        suscripcion.setPlan(tenant.getPlanActual());
+        suscripcion.setFechaInicio(LocalDate.now());
+        suscripcion.setFechaFin(LocalDate.now().plusDays(tenant.getDiasTrial()));
+        suscripcion.setEstado(Suscripcion.EstadoSuscripcion.ACTIVA);
+        suscripcionRepository.save(suscripcion);
+
+        // Crear usuario administrador del tenant
+        Rol rolAdmin = rolRepository.findByNombre("ADMIN")
+                .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
+
+        Usuario adminUser = new Usuario();
+        adminUser.setTenant(tenant);
+        adminUser.setRol(rolAdmin);
+        adminUser.setUsername(datosUsuario.getUsernamePropietario());
+        adminUser.setPasswordHash(passwordEncoder.encode(datosUsuario.getPasswordPropietario()));
+        adminUser.setEmail(datosUsuario.getEmailPropietario());
+        adminUser.setNombres(datosUsuario.getNombrePropietario());
+        adminUser.setApellidos(datosUsuario.getApellidoPropietario());
+        adminUser.setTelefono(datosUsuario.getTelefonoPropietario());
+        adminUser.setEstado(Usuario.EstadoUsuario.ACTIVO);
+        usuarioRepository.save(adminUser);
+
+        // Incrementar contador de usuarios activos
+        tenant.setUsuariosActivos(1);
+        tenantRepository.save(tenant);
+
+        return toDTO(tenant);
+    }
+
+    /**
+     * RECHAZAR SOLICITUD DE REGISTRO (Solo SuperAdmin)
+     */
+    @Transactional
+    public void rechazarSolicitud(Integer tenantId) {
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Tenant no encontrado"));
+
+        if (tenant.getEstado() != Tenant.EstadoTenant.PENDIENTE) {
+            throw new RuntimeException("El tenant ya fue procesado");
+        }
+
+        tenant.setEstado(Tenant.EstadoTenant.RECHAZADO);
+        tenantRepository.save(tenant);
+    }
+
+    /**
+     * Obtener solicitudes pendientes (Solo SuperAdmin)
+     */
+    public List<TenantDTO> getSolicitudesPendientes() {
+        return tenantRepository.findAll().stream()
+                .filter(t -> t.getEstado() == Tenant.EstadoTenant.PENDIENTE)
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     /**

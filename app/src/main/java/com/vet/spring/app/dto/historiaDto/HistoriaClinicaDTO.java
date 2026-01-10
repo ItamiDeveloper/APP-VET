@@ -8,10 +8,8 @@ import lombok.Setter;
 
 @Getter @Setter
 public class HistoriaClinicaDTO {
-    @NotNull(message = "El campo 'idHistoria' no puede ser nulo")
     private Integer idHistoria;
 
-    @NotNull(message = "El campo 'idTenant' no puede ser nulo")
     private Integer idTenant;
 
     @NotNull(message = "El campo 'idMascota' no puede ser nulo")

@@ -16,7 +16,7 @@ public class DetalleCompraMapper {
         d.setIdCompra(e.getCompra() == null ? null : e.getCompra().getIdCompra());
         d.setIdProducto(e.getProducto() == null ? null : e.getProducto().getIdProducto());
         d.setCantidad(e.getCantidad());
-        d.setCostoUnitario(e.getCostoUnitario());
+        d.setPrecioUnitario(e.getPrecioUnitario());
         d.setSubtotal(e.getSubtotal());
         return d;
     }
@@ -28,7 +28,7 @@ public class DetalleCompraMapper {
         if (d.getIdCompra() != null) { Compra c = new Compra(); c.setIdCompra(d.getIdCompra()); e.setCompra(c); }
         if (d.getIdProducto() != null) { Producto p = new Producto(); p.setIdProducto(d.getIdProducto()); e.setProducto(p); }
         e.setCantidad(d.getCantidad());
-        e.setCostoUnitario(d.getCostoUnitario());
+        e.setPrecioUnitario(d.getPrecioUnitario());
         e.setSubtotal(d.getSubtotal());
         return e;
     }

@@ -419,7 +419,8 @@ SELECT '✅ Todas las tablas creadas exitosamente' AS resultado;
 SELECT '📝 Insertando datos iniciales...' AS paso;
 
 -- Hash BCrypt VERIFICADO para "admin123" - Generado por BCryptPasswordEncoder
-SET @password_hash = '$2a$10$oLJHyLYLScCRvLm/vZSfMuazNV9vq3Ry/VmKLIHpkk1pYeQEksHwy';
+-- Este hash ha sido verificado con PasswordVerifier.java
+SET @password_hash = '$2a$10$dXJ3SW6G7P370PKenZP82u3.LwdFP7D.CnK0MkLfJLBB3KPLfITLe';
 
 -- PLANES
 INSERT INTO plan (nombre, descripcion, precio_mensual, precio_anual, max_usuarios, max_doctores, max_mascotas, tiene_reportes_avanzados, tiene_api_acceso, tiene_soporte_prioritario, orden_visualizacion) VALUES

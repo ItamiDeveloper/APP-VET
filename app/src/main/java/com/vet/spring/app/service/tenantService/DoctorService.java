@@ -30,10 +30,7 @@ public class DoctorService {
      * Obtener todos los doctores de un tenant
      */
     public List<DoctorDTO> getAllDoctoresByTenant(Integer tenantId) {
-        List<Doctor> doctores = doctorRepository.findAll()
-            .stream()
-            .filter(d -> d.getTenant().getIdTenant().equals(tenantId))
-            .collect(Collectors.toList());
+        List<Doctor> doctores = doctorRepository.findByTenantId(tenantId);
         return doctores.stream()
             .map(doctorMapper::toDTO)
             .collect(Collectors.toList());
@@ -43,12 +40,8 @@ public class DoctorService {
      * Obtener un doctor por ID
      */
     public DoctorDTO getDoctorById(Integer id, Integer tenantId) {
-        Doctor doctor = doctorRepository.findById(id)
+        Doctor doctor = doctorRepository.findByIdAndTenantId(id, tenantId)
             .orElseThrow(() -> new ResourceNotFoundException("Doctor no encontrado con ID: " + id));
-        
-        if (!doctor.getTenant().getIdTenant().equals(tenantId)) {
-            throw new ResourceNotFoundException("Doctor no encontrado en este tenant");
-        }
         
         return doctorMapper.toDTO(doctor);
     }
@@ -63,10 +56,9 @@ public class DoctorService {
 
         // Verificar que el número de colegiatura es único en el tenant
         if (dto.getColegiatura() != null) {
-            boolean existeColegiatura = doctorRepository.findAll()
+            boolean existeColegiatura = doctorRepository.findByTenantId(tenantId)
                 .stream()
-                .anyMatch(d -> d.getTenant().getIdTenant().equals(tenantId) 
-                    && d.getColegiatura() != null
+                .anyMatch(d -> d.getColegiatura() != null
                     && d.getColegiatura().equals(dto.getColegiatura()));
             
             if (existeColegiatura) {
@@ -115,10 +107,9 @@ public class DoctorService {
         // Verificar número de colegiatura si cambió
         if (dto.getColegiatura() != null && 
             !dto.getColegiatura().equals(doctor.getColegiatura())) {
-            boolean existeColegiatura = doctorRepository.findAll()
+            boolean existeColegiatura = doctorRepository.findByTenantId(tenantId)
                 .stream()
-                .anyMatch(d -> d.getTenant().getIdTenant().equals(tenantId) 
-                    && d.getColegiatura() != null
+                .anyMatch(d -> d.getColegiatura() != null
                     && d.getColegiatura().equals(dto.getColegiatura())
                     && !d.getIdDoctor().equals(id));
             
@@ -158,10 +149,9 @@ public class DoctorService {
      * Obtener doctores activos
      */
     public List<DoctorDTO> getDoctoresActivos(Integer tenantId) {
-        List<Doctor> doctores = doctorRepository.findAll()
+        List<Doctor> doctores = doctorRepository.findByTenantId(tenantId)
             .stream()
-            .filter(d -> d.getTenant().getIdTenant().equals(tenantId) 
-                && d.getEstado() == Doctor.EstadoDoctor.ACTIVO)
+            .filter(d -> d.getEstado() == Doctor.EstadoDoctor.ACTIVO)
             .collect(Collectors.toList());
         
         return doctores.stream()
@@ -174,12 +164,11 @@ public class DoctorService {
      */
     public List<DoctorDTO> buscarDoctores(String termino, Integer tenantId) {
         String terminoLower = termino.toLowerCase();
-        List<Doctor> doctores = doctorRepository.findAll()
+        List<Doctor> doctores = doctorRepository.findByTenantId(tenantId)
             .stream()
-            .filter(d -> d.getTenant().getIdTenant().equals(tenantId) 
-                && (d.getNombres().toLowerCase().contains(terminoLower)
+            .filter(d -> d.getNombres().toLowerCase().contains(terminoLower)
                     || d.getApellidos().toLowerCase().contains(terminoLower)
-                    || (d.getEspecialidad() != null && d.getEspecialidad().toLowerCase().contains(terminoLower))))
+                    || (d.getEspecialidad() != null && d.getEspecialidad().toLowerCase().contains(terminoLower)))
             .collect(Collectors.toList());
         
         return doctores.stream()

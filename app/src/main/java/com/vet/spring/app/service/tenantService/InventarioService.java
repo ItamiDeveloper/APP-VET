@@ -2,7 +2,11 @@ package com.vet.spring.app.service.tenantService;
 
 import com.vet.spring.app.dto.inventarioDto.InventarioDTO;
 import com.vet.spring.app.entity.inventario.Inventario;
+import com.vet.spring.app.entity.inventario.Producto;
+import com.vet.spring.app.entity.tenant.Tenant;
 import com.vet.spring.app.repository.inventarioRepository.InventarioRepository;
+import com.vet.spring.app.repository.inventarioRepository.ProductoRepository;
+import com.vet.spring.app.repository.tenantRepository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +19,8 @@ import java.util.stream.Collectors;
 public class InventarioService {
 
     private final InventarioRepository inventarioRepository;
+    private final ProductoRepository productoRepository;
+    private final TenantRepository tenantRepository;
 
     @Transactional(readOnly = true)
     public List<InventarioDTO> getAllInventarioByTenant(Integer tenantId) {
@@ -38,7 +44,17 @@ public class InventarioService {
 
     @Transactional
     public InventarioDTO createInventario(InventarioDTO dto, Integer tenantId) {
+        // Validar y obtener el tenant
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Tenant no encontrado"));
+        
+        // Validar y obtener el producto
+        Producto producto = productoRepository.findById(dto.getIdProducto())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + dto.getIdProducto()));
+        
         Inventario inventario = new Inventario();
+        inventario.setTenant(tenant);
+        inventario.setProducto(producto);
         inventario.setStockActual(dto.getStockActual());
         inventario.setStockMinimo(dto.getStockMinimo());
         inventario.setStockMaximo(dto.getStockMaximo());

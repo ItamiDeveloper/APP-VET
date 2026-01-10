@@ -9,7 +9,8 @@ public class DetalleCompraDTO {
     private Integer idDetalleCompra;
     private Integer idCompra;
     private Integer idProducto;
+    private String productoNombre; // Nombre del producto
     private Integer cantidad;
-    private BigDecimal costoUnitario;
+    private BigDecimal precioUnitario; // Renamed from costoUnitario for consistency
     private BigDecimal subtotal;
 }

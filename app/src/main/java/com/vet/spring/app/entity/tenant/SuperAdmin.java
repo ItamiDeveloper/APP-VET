@@ -40,8 +40,8 @@ public class SuperAdmin {
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
-    @Column(name = "ultimo_acceso")
-    private LocalDateTime ultimoAcceso;
+    @Column(name = "fecha_actualizacion")
+    private LocalDateTime fechaActualizacion;
 
     public enum EstadoSuperAdmin {
         ACTIVO, INACTIVO

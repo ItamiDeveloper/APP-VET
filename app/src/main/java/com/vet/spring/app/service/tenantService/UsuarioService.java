@@ -32,10 +32,7 @@ public class UsuarioService {
      * Obtener todos los usuarios de un tenant
      */
     public List<UsuarioDTO> getAllUsuariosByTenant(Integer tenantId) {
-        List<Usuario> usuarios = usuarioRepository.findAll()
-            .stream()
-            .filter(u -> u.getTenant().getIdTenant().equals(tenantId))
-            .collect(Collectors.toList());
+        List<Usuario> usuarios = usuarioRepository.findByTenantId(tenantId);
         return usuarios.stream()
             .map(usuarioMapper::toDTO)
             .collect(Collectors.toList());
@@ -45,13 +42,8 @@ public class UsuarioService {
      * Obtener un usuario por ID
      */
     public UsuarioDTO getUsuarioById(Integer id, Integer tenantId) {
-        Usuario usuario = usuarioRepository.findById(id)
+        Usuario usuario = usuarioRepository.findByIdAndTenantId(id, tenantId)
             .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + id));
-        
-        // Verificar que pertenece al tenant
-        if (!usuario.getTenant().getIdTenant().equals(tenantId)) {
-            throw new ResourceNotFoundException("Usuario no encontrado en este tenant");
-        }
         
         return usuarioMapper.toDTO(usuario);
     }
@@ -70,20 +62,18 @@ public class UsuarioService {
             .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con ID: " + dto.getIdRol()));
 
         // Verificar que username es único en el tenant
-        boolean existeUsername = usuarioRepository.findAll()
+        boolean existeUsername = usuarioRepository.findByTenantId(tenantId)
             .stream()
-            .anyMatch(u -> u.getTenant().getIdTenant().equals(tenantId) 
-                && u.getUsername().equalsIgnoreCase(dto.getUsername()));
+            .anyMatch(u -> u.getUsername().equalsIgnoreCase(dto.getUsername()));
         
         if (existeUsername) {
             throw new IllegalArgumentException("El username ya existe en este tenant");
         }
 
         // Verificar que email es único en el tenant
-        boolean existeEmail = usuarioRepository.findAll()
+        boolean existeEmail = usuarioRepository.findByTenantId(tenantId)
             .stream()
-            .anyMatch(u -> u.getTenant().getIdTenant().equals(tenantId) 
-                && u.getEmail().equalsIgnoreCase(dto.getEmail()));
+            .anyMatch(u -> u.getEmail().equalsIgnoreCase(dto.getEmail()));
         
         if (existeEmail) {
             throw new IllegalArgumentException("El email ya existe en este tenant");
@@ -130,10 +120,9 @@ public class UsuarioService {
         // Actualizar campos
         if (dto.getEmail() != null && !dto.getEmail().equals(usuario.getEmail())) {
             // Verificar que el nuevo email no exista
-            boolean existeEmail = usuarioRepository.findAll()
+            boolean existeEmail = usuarioRepository.findByTenantId(tenantId)
                 .stream()
-                .anyMatch(u -> u.getTenant().getIdTenant().equals(tenantId) 
-                    && u.getEmail().equalsIgnoreCase(dto.getEmail())
+                .anyMatch(u -> u.getEmail().equalsIgnoreCase(dto.getEmail())
                     && !u.getIdUsuario().equals(id));
             
             if (existeEmail) {
@@ -200,10 +189,9 @@ public class UsuarioService {
      * Obtener usuarios por rol
      */
     public List<UsuarioDTO> getUsuariosByRol(Integer idRol, Integer tenantId) {
-        List<Usuario> usuarios = usuarioRepository.findAll()
+        List<Usuario> usuarios = usuarioRepository.findByTenantId(tenantId)
             .stream()
-            .filter(u -> u.getTenant().getIdTenant().equals(tenantId) 
-                && u.getRol().getIdRol().equals(idRol))
+            .filter(u -> u.getRol().getIdRol().equals(idRol))
             .collect(Collectors.toList());
         
         return usuarios.stream()
@@ -215,10 +203,9 @@ public class UsuarioService {
      * Obtener usuarios activos
      */
     public List<UsuarioDTO> getUsuariosActivos(Integer tenantId) {
-        List<Usuario> usuarios = usuarioRepository.findAll()
+        List<Usuario> usuarios = usuarioRepository.findByTenantId(tenantId)
             .stream()
-            .filter(u -> u.getTenant().getIdTenant().equals(tenantId) 
-                && u.getEstado() == Usuario.EstadoUsuario.ACTIVO)
+            .filter(u -> u.getEstado() == Usuario.EstadoUsuario.ACTIVO)
             .collect(Collectors.toList());
         
         return usuarios.stream()

@@ -2,6 +2,7 @@ package com.vet.spring.app.entity.venta;
 
 import java.math.BigDecimal;
 import com.vet.spring.app.entity.inventario.Producto;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,7 @@ public class DetalleVenta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_detalle_venta")
     private Integer idDetalleVenta;
 
     @ManyToOne
@@ -29,7 +31,12 @@ public class DetalleVenta {
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
 
+    @Column(name = "cantidad")
     private Integer cantidad;
+    
+    @Column(name = "precio_unitario")
     private BigDecimal precioUnitario;
+    
+    @Column(name = "subtotal")
     private BigDecimal subtotal;
 }

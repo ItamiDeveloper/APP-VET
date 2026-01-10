@@ -2,9 +2,11 @@ package com.vet.spring.app.service.tenantService;
 
 import com.vet.spring.app.dto.estadisticasDto.*;
 import com.vet.spring.app.entity.cita.Cita;
+import com.vet.spring.app.entity.compra.Compra;
 import com.vet.spring.app.entity.venta.Venta;
 import com.vet.spring.app.repository.citaRepository.CitaRepository;
 import com.vet.spring.app.repository.clienteRepository.ClienteRepository;
+import com.vet.spring.app.repository.compraRepository.CompraRepository;
 import com.vet.spring.app.repository.mascotaRepository.MascotaRepository;
 import com.vet.spring.app.repository.ventaRepository.VentaRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class EstadisticasService {
     private final MascotaRepository mascotaRepository;
     private final CitaRepository citaRepository;
     private final VentaRepository ventaRepository;
+    private final CompraRepository compraRepository;
 
     @Transactional(readOnly = true)
     public DashboardStatsDTO getDashboardStats(Integer tenantId) {
@@ -41,12 +44,23 @@ public class EstadisticasService {
                 .count();
         
         // Calcular ingresos totales de las ventas
-        Double totalIngresos = ventaRepository.findAll().stream()
+        Double totalVentas = ventaRepository.findAll().stream()
                 .filter(v -> v.getTenant().getIdTenant().equals(tenantId))
                 .map(Venta::getTotal)
                 .filter(Objects::nonNull)
                 .mapToDouble(BigDecimal::doubleValue)
                 .sum();
+        
+        // Calcular total de compras
+        Double totalCompras = compraRepository.findAll().stream()
+                .filter(c -> c.getTenant().getIdTenant().equals(tenantId))
+                .map(Compra::getTotal)
+                .filter(Objects::nonNull)
+                .mapToDouble(BigDecimal::doubleValue)
+                .sum();
+        
+        // Ingresos netos = ventas - compras
+        Double totalIngresos = totalVentas - totalCompras;
         
         return new DashboardStatsDTO(
                 totalClientes,

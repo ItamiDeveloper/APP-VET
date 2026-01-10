@@ -1,8 +1,14 @@
 package com.vet.spring.app.service.tenantService;
 
 import com.vet.spring.app.dto.historiaDto.HistoriaClinicaDTO;
+import com.vet.spring.app.entity.doctor.Doctor;
 import com.vet.spring.app.entity.historia.HistoriaClinica;
+import com.vet.spring.app.entity.mascota.Mascota;
+import com.vet.spring.app.entity.tenant.Tenant;
+import com.vet.spring.app.repository.doctorRepository.DoctorRepository;
 import com.vet.spring.app.repository.historiaRepository.HistoriaClinicaRepository;
+import com.vet.spring.app.repository.mascotaRepository.MascotaRepository;
+import com.vet.spring.app.repository.tenantRepository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +21,9 @@ import java.util.stream.Collectors;
 public class HistoriaClinicaService {
 
     private final HistoriaClinicaRepository historiaClinicaRepository;
+    private final TenantRepository tenantRepository;
+    private final MascotaRepository mascotaRepository;
+    private final DoctorRepository doctorRepository;
 
     @Transactional(readOnly = true)
     public List<HistoriaClinicaDTO> getAllHistoriasByTenant(Integer tenantId) {
@@ -47,7 +56,22 @@ public class HistoriaClinicaService {
 
     @Transactional
     public HistoriaClinicaDTO createHistoria(HistoriaClinicaDTO dto, Integer tenantId) {
+        // Validar y obtener el tenant
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Tenant no encontrado"));
+        
+        // Validar y obtener la mascota
+        Mascota mascota = mascotaRepository.findById(dto.getIdMascota())
+                .orElseThrow(() -> new RuntimeException("Mascota no encontrada con ID: " + dto.getIdMascota()));
+        
+        // Validar y obtener el doctor
+        Doctor doctor = doctorRepository.findById(dto.getIdDoctor())
+                .orElseThrow(() -> new RuntimeException("Doctor no encontrado con ID: " + dto.getIdDoctor()));
+        
         HistoriaClinica historia = new HistoriaClinica();
+        historia.setTenant(tenant);
+        historia.setMascota(mascota);
+        historia.setDoctor(doctor);
         historia.setFechaAtencion(dto.getFechaAtencion());
         historia.setDiagnostico(dto.getDiagnostico());
         historia.setTratamiento(dto.getTratamiento());
